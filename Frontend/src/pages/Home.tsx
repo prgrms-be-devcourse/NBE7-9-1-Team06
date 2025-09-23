@@ -77,7 +77,11 @@ export function Home({ onAddToCart }: HomeProps) {
   return (
     <div className="grid">
       {products.map((p) => (
-        <ProductCard key={p.id} product={p} onAdd={onAddToCart ? () => onAddToCart(p) : undefined} />
+        <ProductCard
+          key={p.id}
+          product={p}
+          onAdd={onAddToCart ? () => onAddToCart(p) : undefined}
+        />
       ))}
     </div>
   );
