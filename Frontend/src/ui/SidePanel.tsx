@@ -128,7 +128,11 @@ export function SidePanel({
             </div>
           </div>
         </aside>
-        {open && <div className="backdrop" onClick={onClose} aria-hidden />}
+        <div
+          className={`backdrop ${open ? "visible" : ""}`}
+          onClick={onClose}
+          aria-hidden
+        />
       </>
     );
   }
@@ -303,15 +307,18 @@ export function SidePanel({
             </div>
           </div>
         </aside>
-        {open && (
-          <div className="backdrop" onClick={handleBackToCart} aria-hidden />
-        )}
+        <div
+          className={`backdrop ${open ? "visible" : ""}`}
+          onClick={handleBackToCart}
+          aria-hidden
+        />
       </>
     );
   }
   return (
     <>
       <aside className={`side-panel ${open ? "open" : ""}`} aria-hidden={!open}>
+        {/* Header - Fixed */}
         <div className="side-header">
           <div className="side-title">장바구니</div>
           <button
@@ -322,59 +329,237 @@ export function SidePanel({
             ✕
           </button>
         </div>
+
+        {/* Content - Scrollable */}
         <div className="side-content">
-          {items.length === 0 ? (
-            <div className="side-empty">담긴 상품이 없습니다</div>
-          ) : (
-            <ul className="cart-list">
-              {items.map((it) => (
-                <li key={it.productId} className="cart-item">
-                  <div className="cart-product-info">
-                    <div className="cart-name">{it.name}</div>
-                    <div className="cart-unit-price">
-                      단가: {formatKRW(it.unitPrice)}
-                    </div>
-                  </div>
-                  <div className="cart-quantity-section">
-                    <div className="cart-controls">
-                      <button
-                        onClick={() => onChangeQty(it.productId, -1)}
-                        aria-label={`${it.name} 수량 감소`}
-                        className="qty-btn"
-                      >
-                        −
-                      </button>
-                      <div className="cart-qty" aria-live="polite">
-                        {it.qty}
+          {/* Cart Items Section */}
+          <div>
+            {items.length === 0 ? (
+              <div className="side-empty">담긴 상품이 없습니다</div>
+            ) : (
+              <ul className="cart-list">
+                {items.map((it) => (
+                  <li key={it.productId} className="cart-item">
+                    <div className="cart-product-info">
+                      <div className="cart-name">{it.name}</div>
+                      <div className="cart-unit-price">
+                        단가: {formatKRW(it.unitPrice)}
                       </div>
-                      <button
-                        onClick={() => onChangeQty(it.productId, 1)}
-                        aria-label={`${it.name} 수량 증가`}
-                        className="qty-btn"
-                      >
-                        +
-                      </button>
                     </div>
-                    <div className="cart-subtotal">
-                      소계: {formatKRW(it.unitPrice * it.qty)}
+                    <div className="cart-quantity-section">
+                      <div className="cart-controls">
+                        <button
+                          onClick={() => onChangeQty(it.productId, -1)}
+                          aria-label={`${it.name} 수량 감소`}
+                          className="qty-btn"
+                        >
+                          −
+                        </button>
+                        <div className="cart-qty" aria-live="polite">
+                          {it.qty}
+                        </div>
+                        <button
+                          onClick={() => onChangeQty(it.productId, 1)}
+                          aria-label={`${it.name} 수량 증가`}
+                          className="qty-btn"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="cart-subtotal">
+                        소계: {formatKRW(it.unitPrice * it.qty)}
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div
+            style={{
+              height: "1px",
+              background: "rgba(139, 69, 19, 0.1)",
+              margin: "16px 0",
+            }}
+          />
+
+          {/* Customer Info Section - Always Visible */}
+          <div>
+            <h3
+              style={{
+                margin: "0 0 12px 0",
+                fontSize: "16px",
+                fontWeight: "600",
+                color: "#8b4513",
+              }}
+            >
+              고객정보
+            </h3>
+
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "4px",
+                  fontWeight: "600",
+                  color: "#8b4513",
+                }}
+              >
+                이메일
+              </label>
+              <input
+                type="email"
+                value={customerInfo.email}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }));
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => ({ ...prev, email: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.email ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="이메일을 입력하세요"
+              />
+              {validationErrors.email && (
+                <div
+                  style={{
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {validationErrors.email}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "4px",
+                  fontWeight: "600",
+                  color: "#8b4513",
+                }}
+              >
+                주소
+              </label>
+              <input
+                type="text"
+                value={customerInfo.address}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    address: e.target.value,
+                  }));
+                  if (validationErrors.address) {
+                    setValidationErrors((prev) => ({ ...prev, address: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.address ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="주소를 입력하세요"
+              />
+              {validationErrors.address && (
+                <div
+                  style={{
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {validationErrors.address}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "4px",
+                  fontWeight: "600",
+                  color: "#8b4513",
+                }}
+              >
+                우편번호
+              </label>
+              <input
+                type="text"
+                value={customerInfo.zipCode}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    zipCode: e.target.value,
+                  }));
+                  if (validationErrors.zipCode) {
+                    setValidationErrors((prev) => ({ ...prev, zipCode: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.zipCode ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="우편번호(5자리)"
+              />
+              {validationErrors.zipCode && (
+                <div
+                  style={{
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {validationErrors.zipCode}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer - Fixed */}
+        <div className="side-footer">
           <div className="side-summary">
             <div className="summary-line">
               <span>합계</span>
               <strong>{formatKRW(total)}</strong>
             </div>
-            <button className="checkout-button" onClick={handleCheckout}>
+            <button
+              className="checkout-button"
+              onClick={handleCheckout}
+              disabled={items.length === 0}
+            >
               결제하기
             </button>
           </div>
         </div>
       </aside>
-      {open && <div className="backdrop" onClick={onClose} aria-hidden />}
+      <div
+        className={`backdrop ${open ? "visible" : ""}`}
+        onClick={onClose}
+        aria-hidden
+      />
     </>
   );
 }
