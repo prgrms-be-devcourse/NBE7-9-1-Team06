@@ -140,16 +140,33 @@ export function ProductDetailPanel({
             <div>
               {/* Product Image */}
               <div style={{ marginBottom: "20px" }}>
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      background: "#eee",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "8px",
+                      color: "#666",
+                    }}
+                  >
+                    이미지 없음
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
@@ -193,7 +210,7 @@ export function ProductDetailPanel({
                     >
                       품절
                     </span>
-                  ) : product.stock <= 5 ? (
+                  ) : product.stock !== null && product.stock <= 5 ? (
                     <span
                       style={{
                         display: "inline-block",
