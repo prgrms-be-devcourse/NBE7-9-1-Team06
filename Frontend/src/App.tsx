@@ -7,6 +7,7 @@ import { ProductDetail } from "./pages/ProductDetail";
 import type { CartItem, Product } from "./types";
 import { SidePanel } from "./ui/SidePanel";
 import { ProductDetailPanel } from "./ui/ProductDetailPanel";
+import { OrderHistoryPanel } from "./ui/OrderHistoryPanel";
 
 function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -16,6 +17,7 @@ function App() {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
+  const [orderHistoryOpen, setOrderHistoryOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -84,6 +86,14 @@ function App() {
     setSidePanelOpen(true);
   }
 
+  function openOrderHistory() {
+    setOrderHistoryOpen(true);
+  }
+
+  function closeOrderHistory() {
+    setOrderHistoryOpen(false);
+  }
+
   // Calculate total cart quantity
   const totalCartQuantity = cartItems.reduce((sum, item) => sum + item.qty, 0);
 
@@ -93,16 +103,25 @@ function App() {
         <div className="brand">
           <Link to="/">Grids Circles</Link>
         </div>
-        <button
-          className="header-cart-button"
-          onClick={openCartFromHeader}
-          aria-label="장바구니 보기"
-        >
-          🛒
-          {totalCartQuantity > 0 && (
-            <span className="cart-badge">{totalCartQuantity}</span>
-          )}
-        </button>
+        <div className="header-buttons">
+          <button
+            className="header-order-history-button"
+            onClick={openOrderHistory}
+            aria-label="주문내역 보기"
+          >
+            📋 주문내역
+          </button>
+          <button
+            className="header-cart-button"
+            onClick={openCartFromHeader}
+            aria-label="장바구니 보기"
+          >
+            🛒
+            {totalCartQuantity > 0 && (
+              <span className="cart-badge">{totalCartQuantity}</span>
+            )}
+          </button>
+        </div>
       </header>
 
       <main className="main" role="main">
@@ -134,6 +153,8 @@ function App() {
         onClose={closeProductDetail}
         onAddToCart={addToCart}
       />
+
+      <OrderHistoryPanel open={orderHistoryOpen} onClose={closeOrderHistory} />
 
       {toast && (
         <div className="toast" role="status" aria-live="polite">

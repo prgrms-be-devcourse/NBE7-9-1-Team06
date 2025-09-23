@@ -43,6 +43,32 @@
   text-decoration: none !important;
 }
 
+/* Header buttons container */
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Header order history button */
+.header-order-history-button {
+  background: none;
+  border: 1px solid #8b4513;
+  color: #8b4513;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-order-history-button:hover {
+  background: #8b4513;
+  color: #fff;
+}
+
 /* Header cart button */
 .header-cart-button {
   position: relative;
@@ -437,4 +463,29 @@
   padding: 10px 14px;
   border-radius: 999px;
   z-index: 50;
+}
+
+/* Responsive design for header */
+@media (max-width: 640px) {
+  .header {
+    padding: 8px 12px;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+  }
+
+  .header-buttons {
+    gap: 8px;
+  }
+
+  .header-order-history-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .header-cart-button {
+    font-size: 20px;
+    padding: 6px;
+  }
 }

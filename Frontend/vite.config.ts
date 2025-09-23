@@ -126,6 +126,63 @@ export default defineConfig(({ mode }) => {
           return;
         }
 
+        // Order history API
+        if (req.url === "/api/v1/orders/history" && req.method === "GET") {
+          const url = new URL(req.url, `http://${req.headers.host}`);
+          const email = url.searchParams.get("email");
+
+          if (!email) {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: "이메일이 필요합니다." }));
+            return;
+          }
+
+          // Mock order history data
+          const mockOrderHistory = [
+            {
+              orderId: "order_1703123456789",
+              email: email,
+              orderDate: "2024-01-15T10:30:00Z",
+              status: "완료",
+              totalAmount: 48800,
+              items: [
+                {
+                  productId: "p1",
+                  name: "프리미엄 원두 1kg",
+                  unitPrice: 12900,
+                  quantity: 2,
+                },
+                {
+                  productId: "p5",
+                  name: "여분 필터(100매)",
+                  unitPrice: 4900,
+                  quantity: 1,
+                },
+              ],
+            },
+            {
+              orderId: "order_1703123456790",
+              email: email,
+              orderDate: "2024-01-10T14:20:00Z",
+              status: "완료",
+              totalAmount: 35900,
+              items: [
+                {
+                  productId: "p2",
+                  name: "핸드드립 주전자",
+                  unitPrice: 35900,
+                  quantity: 1,
+                },
+              ],
+            },
+          ];
+
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(mockOrderHistory));
+          return;
+        }
+
         next();
       });
     },
