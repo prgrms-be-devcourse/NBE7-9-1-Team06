@@ -22,6 +22,49 @@ export function SidePanel({
     address: "",
     zipCode: "",
   });
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    address: "",
+    zipCode: "",
+  });
+
+  function validateCustomerInfo() {
+    const errors = {
+      email: "",
+      address: "",
+      zipCode: "",
+    };
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!customerInfo.email) {
+      errors.email = "이메일을 입력해주세요";
+    } else if (!emailRegex.test(customerInfo.email)) {
+      errors.email = "올바른 이메일 형식이 아닙니다";
+    }
+
+    // Address validation
+    if (!customerInfo.address) {
+      errors.address = "주소를 입력해주세요";
+    } else if (customerInfo.address.length < 5) {
+      errors.address = "주소는 5자 이상 입력해주세요";
+    }
+
+    // Zip code validation
+    const zipRegex = /^\d{5}$/;
+    if (!customerInfo.zipCode) {
+      errors.zipCode = "우편번호를 입력해주세요";
+    } else if (!zipRegex.test(customerInfo.zipCode)) {
+      errors.zipCode = "우편번호는 숫자 5자리로 입력해주세요";
+    }
+
+    setValidationErrors(errors);
+    return !errors.email && !errors.address && !errors.zipCode;
+  }
+
+  function isFormValid() {
+    return validateCustomerInfo();
+  }
   const [showOrderComplete, setShowOrderComplete] = useState(false);
 
   function handleCheckout() {
@@ -97,23 +140,32 @@ export function SidePanel({
               >
                 이메일
               </label>
-              <input
-                type="email"
-                value={customerInfo.email}
-                onChange={(e) =>
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                }}
-                placeholder="이메일을 입력하세요"
-              />
+                <input
+                  type="email"
+                  value={customerInfo.email}
+                  onChange={(e) => {
+                    setCustomerInfo((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }));
+                    // Clear error when user starts typing
+                    if (validationErrors.email) {
+                      setValidationErrors(prev => ({ ...prev, email: "" }));
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    border: `1px solid ${validationErrors.email ? "#dc2626" : "#ddd"}`,
+                    borderRadius: "4px",
+                  }}
+                  placeholder="이메일을 입력하세요"
+                />
+                {validationErrors.email && (
+                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
+                    {validationErrors.email}
+                  </div>
+                )}
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -125,23 +177,31 @@ export function SidePanel({
               >
                 주소
               </label>
-              <input
-                type="text"
-                value={customerInfo.address}
-                onChange={(e) =>
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    address: e.target.value,
-                  }))
-                }
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                }}
-                placeholder="주소를 입력하세요"
-              />
+                <input
+                  type="text"
+                  value={customerInfo.address}
+                  onChange={(e) => {
+                    setCustomerInfo((prev) => ({
+                      ...prev,
+                      address: e.target.value,
+                    }));
+                    if (validationErrors.address) {
+                      setValidationErrors(prev => ({ ...prev, address: "" }));
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    border: `1px solid ${validationErrors.address ? "#dc2626" : "#ddd"}`,
+                    borderRadius: "4px",
+                  }}
+                  placeholder="주소를 입력하세요"
+                />
+                {validationErrors.address && (
+                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
+                    {validationErrors.address}
+                  </div>
+                )}
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -153,30 +213,46 @@ export function SidePanel({
               >
                 우편번호
               </label>
-              <input
-                type="text"
-                value={customerInfo.zipCode}
-                onChange={(e) =>
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    zipCode: e.target.value,
-                  }))
-                }
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                }}
-                placeholder="우편번호를 입력하세요"
-              />
+                <input
+                  type="text"
+                  value={customerInfo.zipCode}
+                  onChange={(e) => {
+                    setCustomerInfo((prev) => ({
+                      ...prev,
+                      zipCode: e.target.value,
+                    }));
+                    if (validationErrors.zipCode) {
+                      setValidationErrors(prev => ({ ...prev, zipCode: "" }));
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    border: `1px solid ${validationErrors.zipCode ? "#dc2626" : "#ddd"}`,
+                    borderRadius: "4px",
+                  }}
+                  placeholder="우편번호를 입력하세요"
+                />
+                {validationErrors.zipCode && (
+                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
+                    {validationErrors.zipCode}
+                  </div>
+                )}
             </div>
             <div className="side-summary">
               <div className="summary-line">
                 <span>합계</span>
                 <strong>{formatKRW(total)}</strong>
               </div>
-              <button className="checkout-button" onClick={handleOrderComplete}>
+              <button 
+                className="checkout-button" 
+                onClick={handleOrderComplete}
+                disabled={!isFormValid()}
+                style={{
+                  opacity: isFormValid() ? 1 : 0.5,
+                  cursor: isFormValid() ? "pointer" : "not-allowed"
+                }}
+              >
                 주문 완료
               </button>
             </div>
@@ -210,7 +286,9 @@ export function SidePanel({
                 <li key={it.productId} className="cart-item">
                   <div className="cart-product-info">
                     <div className="cart-name">{it.name}</div>
-                    <div className="cart-unit-price">단가: {formatKRW(it.unitPrice)}</div>
+                    <div className="cart-unit-price">
+                      단가: {formatKRW(it.unitPrice)}
+                    </div>
                   </div>
                   <div className="cart-quantity-section">
                     <div className="cart-controls">
@@ -232,7 +310,9 @@ export function SidePanel({
                         +
                       </button>
                     </div>
-                    <div className="cart-subtotal">소계: {formatKRW(it.unitPrice * it.qty)}</div>
+                    <div className="cart-subtotal">
+                      소계: {formatKRW(it.unitPrice * it.qty)}
+                    </div>
                   </div>
                 </li>
               ))}
