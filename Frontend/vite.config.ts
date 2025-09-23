@@ -113,6 +113,19 @@ export default defineConfig(({ mode }) => {
           return;
         }
 
+        // Order creation API
+        if (req.url === "/api/v1/orders" && req.method === "POST") {
+          res.setHeader("Content-Type", "application/json");
+          res.end(
+            JSON.stringify({
+              success: true,
+              orderId: `order_${Date.now()}`,
+              message: "주문이 성공적으로 생성되었습니다.",
+            })
+          );
+          return;
+        }
+
         next();
       });
     },

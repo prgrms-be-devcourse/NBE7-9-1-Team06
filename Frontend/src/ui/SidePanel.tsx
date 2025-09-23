@@ -18,7 +18,6 @@ export function SidePanel({
   onOrderComplete,
 }: SidePanelProps) {
   const total = items.reduce((s, i) => s + i.unitPrice * i.qty, 0);
-  const [showCheckout, setShowCheckout] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     email: "",
     zipCode: "",
@@ -84,19 +83,37 @@ export function SidePanel({
   }
   const [showOrderComplete, setShowOrderComplete] = useState(false);
 
-  function handleCheckout() {
+  async function handleCheckout() {
     if (items.length === 0) return;
-    setShowCheckout(true);
-  }
-
-  function handleOrderComplete() {
     if (!isFormValid()) return;
-    setShowOrderComplete(true);
-  }
 
-  function handleBackToCart() {
-    setShowCheckout(false);
-    setShowOrderComplete(false);
+    try {
+      // 실제 주문 생성 API 호출
+      const orderData = {
+        customerInfo,
+        items,
+        totalAmount: total,
+        orderStatus: "COMPLETED",
+      };
+
+      const response = await fetch("/api/v1/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error("주문 생성에 실패했습니다.");
+      }
+
+      // 주문 성공 시 완료 화면 표시
+      setShowOrderComplete(true);
+    } catch (error) {
+      console.error("주문 생성 오류:", error);
+      alert("주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   }
 
   function handleFinalOrderComplete() {
@@ -105,7 +122,6 @@ export function SidePanel({
       onOrderComplete();
     }
     setShowOrderComplete(false);
-    setShowCheckout(false);
     setCustomerInfo({ email: "", zipCode: "", address: "", detailAddress: "" });
     setValidationErrors({
       email: "",
@@ -157,184 +173,6 @@ export function SidePanel({
     );
   }
 
-  if (showCheckout) {
-    return (
-      <>
-        <aside
-          className={`side-panel ${open ? "open" : ""}`}
-          aria-hidden={!open}
-        >
-          <div className="side-header">
-            <div className="side-title">주문 정보</div>
-            <button
-              className="side-close"
-              onClick={handleBackToCart}
-              aria-label="뒤로가기"
-            >
-              ←
-            </button>
-          </div>
-          <div className="side-content">
-            <div style={{ marginBottom: "16px" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "4px",
-                  fontWeight: "600",
-                }}
-              >
-                이메일
-              </label>
-              <input
-                type="email"
-                value={customerInfo.email}
-                onChange={(e) => {
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }));
-                  // Clear error when user starts typing
-                  if (validationErrors.email) {
-                    setValidationErrors((prev) => ({ ...prev, email: "" }));
-                  }
-                }}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: `1px solid ${
-                    validationErrors.email ? "#dc2626" : "#ddd"
-                  }`,
-                  borderRadius: "4px",
-                }}
-                placeholder="이메일을 입력하세요"
-              />
-              {validationErrors.email && (
-                <div
-                  style={{
-                    color: "#dc2626",
-                    fontSize: "12px",
-                    marginTop: "4px",
-                  }}
-                >
-                  {validationErrors.email}
-                </div>
-              )}
-            </div>
-            <div style={{ marginBottom: "16px" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "4px",
-                  fontWeight: "600",
-                }}
-              >
-                주소
-              </label>
-              <input
-                type="text"
-                value={customerInfo.address}
-                onChange={(e) => {
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    address: e.target.value,
-                  }));
-                  if (validationErrors.address) {
-                    setValidationErrors((prev) => ({ ...prev, address: "" }));
-                  }
-                }}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: `1px solid ${
-                    validationErrors.address ? "#dc2626" : "#ddd"
-                  }`,
-                  borderRadius: "4px",
-                }}
-                placeholder="주소를 입력하세요"
-              />
-              {validationErrors.address && (
-                <div
-                  style={{
-                    color: "#dc2626",
-                    fontSize: "12px",
-                    marginTop: "4px",
-                  }}
-                >
-                  {validationErrors.address}
-                </div>
-              )}
-            </div>
-            <div style={{ marginBottom: "16px" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "4px",
-                  fontWeight: "600",
-                }}
-              >
-                우편번호
-              </label>
-              <input
-                type="text"
-                value={customerInfo.zipCode}
-                onChange={(e) => {
-                  setCustomerInfo((prev) => ({
-                    ...prev,
-                    zipCode: e.target.value,
-                  }));
-                  if (validationErrors.zipCode) {
-                    setValidationErrors((prev) => ({ ...prev, zipCode: "" }));
-                  }
-                }}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  border: `1px solid ${
-                    validationErrors.zipCode ? "#dc2626" : "#ddd"
-                  }`,
-                  borderRadius: "4px",
-                }}
-                placeholder="우편번호를 입력하세요"
-              />
-              {validationErrors.zipCode && (
-                <div
-                  style={{
-                    color: "#dc2626",
-                    fontSize: "12px",
-                    marginTop: "4px",
-                  }}
-                >
-                  {validationErrors.zipCode}
-                </div>
-              )}
-            </div>
-            <div className="side-summary">
-              <div className="summary-line">
-                <span>합계</span>
-                <strong>{formatKRW(total)}</strong>
-              </div>
-              <button
-                className="checkout-button"
-                onClick={handleOrderComplete}
-                disabled={!isFormValid()}
-                style={{
-                  opacity: isFormValid() ? 1 : 0.5,
-                  cursor: isFormValid() ? "pointer" : "not-allowed",
-                }}
-              >
-                주문 완료
-              </button>
-            </div>
-          </div>
-        </aside>
-        <div
-          className={`backdrop ${open ? "visible" : ""}`}
-          onClick={handleBackToCart}
-          aria-hidden
-        />
-      </>
-    );
-  }
   return (
     <>
       <aside className={`side-panel ${open ? "open" : ""}`} aria-hidden={!open}>
