@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import "./OrderHistoryPanel.css";
+import {
+  getOrderHistoryByEmail,
+  getAddressInfoByEmail,
+  type AddressInfo,
+} from "../mockData";
 
 export interface OrderHistoryItem {
   productId: string;
@@ -25,6 +30,7 @@ interface OrderHistoryPanelProps {
 export function OrderHistoryPanel({ open, onClose }: OrderHistoryPanelProps) {
   const [email, setEmail] = useState("");
   const [orderHistory, setOrderHistory] = useState<OrderHistory[]>([]);
+  const [addressInfo, setAddressInfo] = useState<AddressInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +38,7 @@ export function OrderHistoryPanel({ open, onClose }: OrderHistoryPanelProps) {
     if (!open) {
       setEmail("");
       setOrderHistory([]);
+      setAddressInfo(null);
       setError(null);
     }
   }, [open]);
@@ -46,19 +53,13 @@ export function OrderHistoryPanel({ open, onClose }: OrderHistoryPanelProps) {
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/v1/orders/history?email=${encodeURIComponent(email)}`
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || "주문내역을 불러오는데 실패했습니다."
-        );
-      }
-
-      const data = await response.json();
-      setOrderHistory(data);
+      // Mock 데이터를 사용하여 주문내역과 주소 정보 조회
+      const [orderData, addressData] = await Promise.all([
+        getOrderHistoryByEmail(email),
+        getAddressInfoByEmail(email),
+      ]);
+      setOrderHistory(orderData);
+      setAddressInfo(addressData);
     } catch (err) {
       setError(
         err instanceof Error
@@ -121,6 +122,30 @@ export function OrderHistoryPanel({ open, onClose }: OrderHistoryPanelProps) {
           </div>
 
           {error && <div className="error-message">{error}</div>}
+
+          {addressInfo && (
+            <div className="address-info-section">
+              <h3>배송 주소 정보</h3>
+              <div className="address-details">
+                <div className="address-item">
+                  <span className="address-label">이메일:</span>
+                  <span className="address-value">{addressInfo.email}</span>
+                </div>
+                <div className="address-item">
+                  <span className="address-label">우편번호:</span>
+                  <span className="address-value">
+                    {addressInfo.postalCode}
+                  </span>
+                </div>
+                <div className="address-item">
+                  <span className="address-label">주소:</span>
+                  <span className="address-value">
+                    {addressInfo.address} {addressInfo.detailAddress}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {orderHistory.length > 0 && (
             <div className="order-history-list">

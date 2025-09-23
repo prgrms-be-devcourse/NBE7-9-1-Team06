@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { CartItem } from "../types";
+import { createOrder, type OrderRequest } from "../mockData";
 import { formatKRW } from "../utils";
 
 type SidePanelProps = {
@@ -88,23 +89,17 @@ export function SidePanel({
     if (!isFormValid()) return;
 
     try {
-      // 실제 주문 생성 API 호출
-      const orderData = {
+      // Mock 데이터를 사용하여 주문 생성
+      const orderData: OrderRequest = {
         customerInfo,
         items,
         totalAmount: total,
         orderStatus: "COMPLETED",
       };
 
-      const response = await fetch("/api/v1/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+      const response = await createOrder(orderData);
 
-      if (!response.ok) {
+      if (!response.success) {
         throw new Error("주문 생성에 실패했습니다.");
       }
 

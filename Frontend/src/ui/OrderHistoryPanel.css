@@ -122,6 +122,44 @@
   font-size: 0.875rem;
 }
 
+.address-info-section {
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.address-info-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.address-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.address-label {
+  font-weight: 500;
+  color: #374151;
+  min-width: 80px;
+}
+
+.address-value {
+  color: #111827;
+  font-weight: 500;
+}
+
 .order-history-list h3 {
   margin: 0 0 16px 0;
   font-size: 1.125rem;
@@ -264,5 +302,15 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+
+  .address-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .address-label {
+    min-width: auto;
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Product, RawProduct } from "../types";
 import { defensivelyMapProducts } from "../utils";
 import { ProductCard } from "../ui/ProductCard";
+import { getProducts } from "../mockData";
 
 type HomeProps = {
   onAddToCart?: (p: Product) => void;
@@ -19,18 +20,9 @@ export function Home({ onAddToCart, onProductClick }: HomeProps) {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/v1/products", {
-          headers: { accept: "application/json" },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as unknown;
-        const raw: RawProduct[] = Array.isArray(data)
-          ? data
-          : Array.isArray((data as any)?.items)
-          ? (data as any).items
-          : [];
-        const mapped = defensivelyMapProducts(raw);
-        if (mounted) setProducts(mapped);
+        // Mock 데이터를 사용하여 상품 목록 조회
+        const data = await getProducts();
+        if (mounted) setProducts(data);
       } catch (e: any) {
         if (mounted) setError(e?.message || "상품을 불러오지 못했습니다");
       } finally {
@@ -42,24 +34,17 @@ export function Home({ onAddToCart, onProductClick }: HomeProps) {
     };
   }, []);
 
-  function handleRetry() {
+  async function handleRetry() {
     setLoading(true);
     setError(null);
-    fetch("/api/v1/products", { headers: { accept: "application/json" } })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        const raw: RawProduct[] = Array.isArray(data)
-          ? data
-          : Array.isArray((data as any)?.items)
-          ? (data as any).items
-          : [];
-        setProducts(defensivelyMapProducts(raw));
-      })
-      .catch((e: any) => setError(e?.message || "상품을 불러오지 못했습니다"))
-      .finally(() => setLoading(false));
+    try {
+      const data = await getProducts();
+      setProducts(data);
+    } catch (e: any) {
+      setError(e?.message || "상품을 불러오지 못했습니다");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (loading) return <SkeletonGrid />;

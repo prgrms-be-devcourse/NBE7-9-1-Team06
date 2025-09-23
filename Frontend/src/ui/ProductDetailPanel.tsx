@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Product } from "../types";
+import { getProductById } from "../mockData";
 import { formatKRW } from "../utils";
 
 type ProductDetailPanelProps = {
@@ -31,23 +32,13 @@ export function ProductDetailPanel({
     setLoading(true);
     setError(null);
 
-    // Mock API call - 실제로는 GET /api/v1/products/{productId}
-    fetch(`/api/v1/products/${productId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("상품을 불러올 수 없습니다");
-        return res.json();
-      })
+    // Mock 데이터를 사용하여 상품 상세 조회
+    getProductById(productId)
       .then((data) => {
-        // Mock data for now - 실제 API 응답에 맞게 조정 필요
-        const mockProduct: Product = {
-          id: productId,
-          name: data.name || "프리미엄 원두 1kg",
-          price: data.price || 12900,
-          imageUrl: data.imageUrl || "https://picsum.photos/400/300?random=1",
-          stock: data.stock || 10,
-          isActive: data.isActive !== false,
-        };
-        setProduct(mockProduct);
+        if (!data) {
+          throw new Error("상품을 찾을 수 없습니다");
+        }
+        setProduct(data);
       })
       .catch((err) => {
         setError(err.message);
