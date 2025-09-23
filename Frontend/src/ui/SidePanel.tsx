@@ -208,26 +208,31 @@ export function SidePanel({
             <ul className="cart-list">
               {items.map((it) => (
                 <li key={it.productId} className="cart-item">
-                  <div className="cart-line">
+                  <div className="cart-product-info">
                     <div className="cart-name">{it.name}</div>
-                    <div className="cart-price">{formatKRW(it.unitPrice)}</div>
+                    <div className="cart-unit-price">단가: {formatKRW(it.unitPrice)}</div>
                   </div>
-                  <div className="cart-controls">
-                    <button
-                      onClick={() => onChangeQty(it.productId, -1)}
-                      aria-label={`${it.name} 수량 감소`}
-                    >
-                      -
-                    </button>
-                    <div className="cart-qty" aria-live="polite">
-                      {it.qty}
+                  <div className="cart-quantity-section">
+                    <div className="cart-controls">
+                      <button
+                        onClick={() => onChangeQty(it.productId, -1)}
+                        aria-label={`${it.name} 수량 감소`}
+                        className="qty-btn"
+                      >
+                        −
+                      </button>
+                      <div className="cart-qty" aria-live="polite">
+                        {it.qty}
+                      </div>
+                      <button
+                        onClick={() => onChangeQty(it.productId, 1)}
+                        aria-label={`${it.name} 수량 증가`}
+                        className="qty-btn"
+                      >
+                        +
+                      </button>
                     </div>
-                    <button
-                      onClick={() => onChangeQty(it.productId, 1)}
-                      aria-label={`${it.name} 수량 증가`}
-                    >
-                      +
-                    </button>
+                    <div className="cart-subtotal">소계: {formatKRW(it.unitPrice * it.qty)}</div>
                   </div>
                 </li>
               ))}
