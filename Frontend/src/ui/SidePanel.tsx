@@ -21,20 +21,23 @@ export function SidePanel({
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     email: "",
-    address: "",
     zipCode: "",
+    address: "",
+    detailAddress: "",
   });
   const [validationErrors, setValidationErrors] = useState({
     email: "",
-    address: "",
     zipCode: "",
+    address: "",
+    detailAddress: "",
   });
 
   function validateCustomerInfo() {
     const errors = {
       email: "",
-      address: "",
       zipCode: "",
+      address: "",
+      detailAddress: "",
     };
 
     // Email validation
@@ -45,13 +48,6 @@ export function SidePanel({
       errors.email = "올바른 이메일 형식이 아닙니다";
     }
 
-    // Address validation
-    if (!customerInfo.address) {
-      errors.address = "주소를 입력해주세요";
-    } else if (customerInfo.address.length < 5) {
-      errors.address = "주소는 5자 이상 입력해주세요";
-    }
-
     // Zip code validation
     const zipRegex = /^\d{5}$/;
     if (!customerInfo.zipCode) {
@@ -60,8 +56,27 @@ export function SidePanel({
       errors.zipCode = "우편번호는 숫자 5자리로 입력해주세요";
     }
 
+    // Address validation
+    if (!customerInfo.address) {
+      errors.address = "주소를 입력해주세요";
+    } else if (customerInfo.address.length < 5) {
+      errors.address = "주소는 5자 이상 입력해주세요";
+    }
+
+    // Detail address validation
+    if (!customerInfo.detailAddress) {
+      errors.detailAddress = "상세주소를 입력해주세요";
+    } else if (customerInfo.detailAddress.length < 2) {
+      errors.detailAddress = "상세주소는 2자 이상 입력해주세요";
+    }
+
     setValidationErrors(errors);
-    return !errors.email && !errors.address && !errors.zipCode;
+    return (
+      !errors.email &&
+      !errors.zipCode &&
+      !errors.address &&
+      !errors.detailAddress
+    );
   }
 
   function isFormValid() {
@@ -91,8 +106,13 @@ export function SidePanel({
     }
     setShowOrderComplete(false);
     setShowCheckout(false);
-    setCustomerInfo({ email: "", address: "", zipCode: "" });
-    setValidationErrors({ email: "", address: "", zipCode: "" });
+    setCustomerInfo({ email: "", zipCode: "", address: "", detailAddress: "" });
+    setValidationErrors({
+      email: "",
+      zipCode: "",
+      address: "",
+      detailAddress: "",
+    });
     onClose();
   }
 
@@ -398,7 +418,7 @@ export function SidePanel({
               고객정보
             </h3>
 
-            <div style={{ marginBottom: "16px" }}>
+            <div style={{ marginBottom: "12px" }}>
               <label
                 style={{
                   display: "block",
@@ -423,11 +443,12 @@ export function SidePanel({
                 }}
                 style={{
                   width: "100%",
-                  padding: "8px",
+                  padding: "6px",
                   border: `1px solid ${
                     validationErrors.email ? "#dc2626" : "#ddd"
                   }`,
                   borderRadius: "4px",
+                  fontSize: "14px",
                 }}
                 placeholder="이메일을 입력하세요"
               />
@@ -444,7 +465,54 @@ export function SidePanel({
               )}
             </div>
 
-            <div style={{ marginBottom: "16px" }}>
+            <div style={{ marginBottom: "12px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "4px",
+                  fontWeight: "600",
+                  color: "#8b4513",
+                }}
+              >
+                우편번호
+              </label>
+              <input
+                type="text"
+                value={customerInfo.zipCode}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    zipCode: e.target.value,
+                  }));
+                  if (validationErrors.zipCode) {
+                    setValidationErrors((prev) => ({ ...prev, zipCode: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "6px",
+                  border: `1px solid ${
+                    validationErrors.zipCode ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                }}
+                placeholder="우편번호(5자리)"
+              />
+              {validationErrors.zipCode && (
+                <div
+                  style={{
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {validationErrors.zipCode}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: "12px" }}>
               <label
                 style={{
                   display: "block",
@@ -469,11 +537,12 @@ export function SidePanel({
                 }}
                 style={{
                   width: "100%",
-                  padding: "8px",
+                  padding: "6px",
                   border: `1px solid ${
                     validationErrors.address ? "#dc2626" : "#ddd"
                   }`,
                   borderRadius: "4px",
+                  fontSize: "14px",
                 }}
                 placeholder="주소를 입력하세요"
               />
@@ -499,31 +568,35 @@ export function SidePanel({
                   color: "#8b4513",
                 }}
               >
-                우편번호
+                상세주소
               </label>
               <input
                 type="text"
-                value={customerInfo.zipCode}
+                value={customerInfo.detailAddress}
                 onChange={(e) => {
                   setCustomerInfo((prev) => ({
                     ...prev,
-                    zipCode: e.target.value,
+                    detailAddress: e.target.value,
                   }));
-                  if (validationErrors.zipCode) {
-                    setValidationErrors((prev) => ({ ...prev, zipCode: "" }));
+                  if (validationErrors.detailAddress) {
+                    setValidationErrors((prev) => ({
+                      ...prev,
+                      detailAddress: "",
+                    }));
                   }
                 }}
                 style={{
                   width: "100%",
-                  padding: "8px",
+                  padding: "6px",
                   border: `1px solid ${
-                    validationErrors.zipCode ? "#dc2626" : "#ddd"
+                    validationErrors.detailAddress ? "#dc2626" : "#ddd"
                   }`,
                   borderRadius: "4px",
+                  fontSize: "14px",
                 }}
-                placeholder="우편번호(5자리)"
+                placeholder="상세주소를 입력하세요"
               />
-              {validationErrors.zipCode && (
+              {validationErrors.detailAddress && (
                 <div
                   style={{
                     color: "#dc2626",
@@ -531,7 +604,7 @@ export function SidePanel({
                     marginTop: "4px",
                   }}
                 >
-                  {validationErrors.zipCode}
+                  {validationErrors.detailAddress}
                 </div>
               )}
             </div>
@@ -545,6 +618,23 @@ export function SidePanel({
               <span>합계</span>
               <strong>{formatKRW(total)}</strong>
             </div>
+
+            {/* Shipping notice */}
+            <div
+              style={{
+                marginBottom: "12px",
+                padding: "8px 12px",
+                background: "rgba(139, 69, 19, 0.1)",
+                borderRadius: "6px",
+                fontSize: "12px",
+                color: "#8b4513",
+                textAlign: "center",
+                lineHeight: "1.4",
+              }}
+            >
+              당일 오후 2시 이후 주문은 다음날 배송을 시작합니다.
+            </div>
+
             <button
               className="checkout-button"
               onClick={handleCheckout}
