@@ -37,6 +37,11 @@ function App() {
     setSidePanelOpen(false);
   }
 
+  function handleOrderComplete() {
+    // Reset cart items
+    setCartItems([]);
+  }
+
   function changeQty(productId: string, delta: number) {
     setCartItems((prev) => {
       const idx = prev.findIndex((it) => it.productId === productId);
@@ -71,7 +76,7 @@ function App() {
         </Routes>
       </main>
 
-      <SidePanel open={sidePanelOpen} items={cartItems} onClose={closeSidePanel} onChangeQty={changeQty} />
+      <SidePanel open={sidePanelOpen} items={cartItems} onClose={closeSidePanel} onChangeQty={changeQty} onOrderComplete={handleOrderComplete} />
 
       {toast && (
         <div className="toast" role="status" aria-live="polite">{toast}</div>

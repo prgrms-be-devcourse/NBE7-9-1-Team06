@@ -7,6 +7,7 @@ type SidePanelProps = {
   items: CartItem[];
   onClose: () => void;
   onChangeQty: (productId: string, delta: number) => void;
+  onOrderComplete?: () => void;
 };
 
 export function SidePanel({
@@ -14,6 +15,7 @@ export function SidePanel({
   items,
   onClose,
   onChangeQty,
+  onOrderComplete,
 }: SidePanelProps) {
   const total = items.reduce((s, i) => s + i.unitPrice * i.qty, 0);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -73,12 +75,25 @@ export function SidePanel({
   }
 
   function handleOrderComplete() {
+    if (!isFormValid()) return;
     setShowOrderComplete(true);
   }
 
   function handleBackToCart() {
     setShowCheckout(false);
     setShowOrderComplete(false);
+  }
+
+  function handleFinalOrderComplete() {
+    // Reset cart and close panel
+    if (onOrderComplete) {
+      onOrderComplete();
+    }
+    setShowOrderComplete(false);
+    setShowCheckout(false);
+    setCustomerInfo({ email: "", address: "", zipCode: "" });
+    setValidationErrors({ email: "", address: "", zipCode: "" });
+    onClose();
   }
 
   if (showOrderComplete) {
@@ -101,8 +116,11 @@ export function SidePanel({
           <div className="side-content">
             <div style={{ textAlign: "center", padding: "20px 0" }}>
               <h3>주문이 완료되었습니다!</h3>
-              <button className="checkout-button" onClick={handleBackToCart}>
-                계속 쇼핑하기
+              <p style={{ margin: "12px 0", color: "#666" }}>
+                배송 예정: TODAY | TOMORROW
+              </p>
+              <button className="checkout-button" onClick={handleFinalOrderComplete}>
+                확인
               </button>
             </div>
           </div>
@@ -140,32 +158,40 @@ export function SidePanel({
               >
                 이메일
               </label>
-                <input
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => {
-                    setCustomerInfo((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }));
-                    // Clear error when user starts typing
-                    if (validationErrors.email) {
-                      setValidationErrors(prev => ({ ...prev, email: "" }));
-                    }
-                  }}
+              <input
+                type="email"
+                value={customerInfo.email}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }));
+                  // Clear error when user starts typing
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => ({ ...prev, email: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.email ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="이메일을 입력하세요"
+              />
+              {validationErrors.email && (
+                <div
                   style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: `1px solid ${validationErrors.email ? "#dc2626" : "#ddd"}`,
-                    borderRadius: "4px",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
                   }}
-                  placeholder="이메일을 입력하세요"
-                />
-                {validationErrors.email && (
-                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
-                    {validationErrors.email}
-                  </div>
-                )}
+                >
+                  {validationErrors.email}
+                </div>
+              )}
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -177,31 +203,39 @@ export function SidePanel({
               >
                 주소
               </label>
-                <input
-                  type="text"
-                  value={customerInfo.address}
-                  onChange={(e) => {
-                    setCustomerInfo((prev) => ({
-                      ...prev,
-                      address: e.target.value,
-                    }));
-                    if (validationErrors.address) {
-                      setValidationErrors(prev => ({ ...prev, address: "" }));
-                    }
-                  }}
+              <input
+                type="text"
+                value={customerInfo.address}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    address: e.target.value,
+                  }));
+                  if (validationErrors.address) {
+                    setValidationErrors((prev) => ({ ...prev, address: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.address ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="주소를 입력하세요"
+              />
+              {validationErrors.address && (
+                <div
                   style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: `1px solid ${validationErrors.address ? "#dc2626" : "#ddd"}`,
-                    borderRadius: "4px",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
                   }}
-                  placeholder="주소를 입력하세요"
-                />
-                {validationErrors.address && (
-                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
-                    {validationErrors.address}
-                  </div>
-                )}
+                >
+                  {validationErrors.address}
+                </div>
+              )}
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label
@@ -213,44 +247,52 @@ export function SidePanel({
               >
                 우편번호
               </label>
-                <input
-                  type="text"
-                  value={customerInfo.zipCode}
-                  onChange={(e) => {
-                    setCustomerInfo((prev) => ({
-                      ...prev,
-                      zipCode: e.target.value,
-                    }));
-                    if (validationErrors.zipCode) {
-                      setValidationErrors(prev => ({ ...prev, zipCode: "" }));
-                    }
-                  }}
+              <input
+                type="text"
+                value={customerInfo.zipCode}
+                onChange={(e) => {
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    zipCode: e.target.value,
+                  }));
+                  if (validationErrors.zipCode) {
+                    setValidationErrors((prev) => ({ ...prev, zipCode: "" }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  border: `1px solid ${
+                    validationErrors.zipCode ? "#dc2626" : "#ddd"
+                  }`,
+                  borderRadius: "4px",
+                }}
+                placeholder="우편번호를 입력하세요"
+              />
+              {validationErrors.zipCode && (
+                <div
                   style={{
-                    width: "100%",
-                    padding: "8px",
-                    border: `1px solid ${validationErrors.zipCode ? "#dc2626" : "#ddd"}`,
-                    borderRadius: "4px",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    marginTop: "4px",
                   }}
-                  placeholder="우편번호를 입력하세요"
-                />
-                {validationErrors.zipCode && (
-                  <div style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px" }}>
-                    {validationErrors.zipCode}
-                  </div>
-                )}
+                >
+                  {validationErrors.zipCode}
+                </div>
+              )}
             </div>
             <div className="side-summary">
               <div className="summary-line">
                 <span>합계</span>
                 <strong>{formatKRW(total)}</strong>
               </div>
-              <button 
-                className="checkout-button" 
+              <button
+                className="checkout-button"
                 onClick={handleOrderComplete}
                 disabled={!isFormValid()}
                 style={{
                   opacity: isFormValid() ? 1 : 0.5,
-                  cursor: isFormValid() ? "pointer" : "not-allowed"
+                  cursor: isFormValid() ? "pointer" : "not-allowed",
                 }}
               >
                 주문 완료
