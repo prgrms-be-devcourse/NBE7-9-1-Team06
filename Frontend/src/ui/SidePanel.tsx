@@ -119,7 +119,10 @@ export function SidePanel({
               <p style={{ margin: "12px 0", color: "#666" }}>
                 배송 예정: TODAY | TOMORROW
               </p>
-              <button className="checkout-button" onClick={handleFinalOrderComplete}>
+              <button
+                className="checkout-button"
+                onClick={handleFinalOrderComplete}
+              >
                 확인
               </button>
             </div>
