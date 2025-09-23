@@ -42,7 +42,14 @@ function App() {
       const idx = prev.findIndex((it) => it.productId === productId);
       if (idx < 0) return prev;
       const item = prev[idx];
-      const nextQty = Math.max(1, item.qty + delta);
+      const nextQty = item.qty + delta;
+      
+      // Remove item if quantity becomes 0 or less
+      if (nextQty <= 0) {
+        return prev.filter((it) => it.productId !== productId);
+      }
+      
+      // Update quantity
       const next = [...prev];
       next[idx] = { ...item, qty: nextQty };
       return next;
