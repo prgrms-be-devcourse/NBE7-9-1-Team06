@@ -19,7 +19,8 @@ function App() {
   }, [toast]);
 
   function addToCart(p: Product) {
-    if (!p.isActive || p.stock === 0 || p.stock == null || p.price == null) return;
+    if (!p.isActive || p.stock === 0 || p.stock == null || p.price == null)
+      return;
     setCartItems((prev) => {
       const idx = prev.findIndex((it) => it.productId === p.id);
       if (idx >= 0) {
@@ -27,7 +28,10 @@ function App() {
         next[idx] = { ...next[idx], qty: next[idx].qty + 1 };
         return next;
       }
-      return [...prev, { productId: p.id, name: p.name, unitPrice: p.price as number, qty: 1 }];
+      return [
+        ...prev,
+        { productId: p.id, name: p.name, unitPrice: p.price as number, qty: 1 },
+      ];
     });
     setSidePanelOpen(true);
     setToast("장바구니에 담겼어요");
@@ -48,12 +52,12 @@ function App() {
       if (idx < 0) return prev;
       const item = prev[idx];
       const nextQty = item.qty + delta;
-      
+
       // Remove item if quantity becomes 0 or less
       if (nextQty <= 0) {
         return prev.filter((it) => it.productId !== productId);
       }
-      
+
       // Update quantity
       const next = [...prev];
       next[idx] = { ...item, qty: nextQty };
@@ -76,10 +80,18 @@ function App() {
         </Routes>
       </main>
 
-      <SidePanel open={sidePanelOpen} items={cartItems} onClose={closeSidePanel} onChangeQty={changeQty} onOrderComplete={handleOrderComplete} />
+      <SidePanel
+        open={sidePanelOpen}
+        items={cartItems}
+        onClose={closeSidePanel}
+        onChangeQty={changeQty}
+        onOrderComplete={handleOrderComplete}
+      />
 
       {toast && (
-        <div className="toast" role="status" aria-live="polite">{toast}</div>
+        <div className="toast" role="status" aria-live="polite">
+          {toast}
+        </div>
       )}
     </div>
   );
