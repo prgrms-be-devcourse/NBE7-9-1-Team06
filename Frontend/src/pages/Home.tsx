@@ -5,9 +5,10 @@ import { ProductCard } from "../ui/ProductCard";
 
 type HomeProps = {
   onAddToCart?: (p: Product) => void;
+  onProductClick?: (productId: string) => void;
 };
 
-export function Home({ onAddToCart }: HomeProps) {
+export function Home({ onAddToCart, onProductClick }: HomeProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +82,7 @@ export function Home({ onAddToCart }: HomeProps) {
           key={p.id}
           product={p}
           onAdd={onAddToCart ? () => onAddToCart(p) : undefined}
+          onClick={onProductClick ? () => onProductClick(p.id) : undefined}
         />
       ))}
     </div>

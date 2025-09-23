@@ -4,9 +4,10 @@ import { formatKRW } from "../utils";
 type ProductCardProps = {
   product: Product;
   onAdd?: () => void;
+  onClick?: () => void;
 };
 
-export function ProductCard({ product: p, onAdd }: ProductCardProps) {
+export function ProductCard({ product: p, onAdd, onClick }: ProductCardProps) {
   const isUnavailable =
     !p.isActive || p.stock === 0 || p.stock == null || p.price == null;
   const isLowStock =
@@ -15,7 +16,11 @@ export function ProductCard({ product: p, onAdd }: ProductCardProps) {
     p.stock > 0 &&
     p.stock <= 5;
   return (
-    <div className={`card ${isUnavailable ? "card-disabled" : ""}`}>
+    <div
+      className={`card ${isUnavailable ? "card-disabled" : ""}`}
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : "default" }}
+    >
       <div className="image-wrap">
         {p.imageUrl ? (
           <img src={p.imageUrl} alt={p.name} />
@@ -40,7 +45,10 @@ export function ProductCard({ product: p, onAdd }: ProductCardProps) {
         {onAdd && (
           <button
             className="add-button"
-            onClick={onAdd}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd();
+            }}
             disabled={isUnavailable}
             aria-label={`${p.name} 장바구니에 담기`}
           >

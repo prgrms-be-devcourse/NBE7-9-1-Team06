@@ -55,6 +55,64 @@ export default defineConfig(({ mode }) => {
           );
           return;
         }
+
+        // Individual product API
+        if (req.url?.startsWith("/api/v1/products/")) {
+          const productId = req.url.split("/").pop();
+          const mockProducts = [
+            {
+              id: "p1",
+              name: "프리미엄 원두 1kg",
+              price: 12900,
+              imageUrl: "https://picsum.photos/seed/p1/600/600",
+              stock: 12,
+              isActive: true,
+            },
+            {
+              id: "p2",
+              name: "핸드드립 주전자",
+              price: 35900,
+              imageUrl: "https://picsum.photos/seed/p2/600/600",
+              stock: 3,
+              isActive: true,
+            },
+            {
+              id: "p3",
+              name: "에스프레소 컵(2개 세트)",
+              price: 15900,
+              imageUrl: "https://picsum.photos/seed/p3/600/600",
+              stock: 0,
+              isActive: true,
+            },
+            {
+              id: "p4",
+              name: "콜드브루 병 1L",
+              price: null,
+              imageUrl: "https://picsum.photos/seed/p4/600/600",
+              stock: 8,
+              isActive: true,
+            },
+            {
+              id: "p5",
+              name: "여분 필터(100매)",
+              price: 4900,
+              imageUrl: "https://picsum.photos/seed/p5/600/600",
+              stock: 1,
+              isActive: true,
+            },
+          ];
+
+          const product = mockProducts.find((p) => p.id === productId);
+          if (product) {
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(product));
+          } else {
+            res.statusCode = 404;
+            res.end(JSON.stringify({ error: "Product not found" }));
+          }
+          return;
+        }
+
         next();
       });
     },
