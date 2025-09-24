@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "orders") // 예약어 피하기
 @Getter
 @Setter
-public class orders {
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
