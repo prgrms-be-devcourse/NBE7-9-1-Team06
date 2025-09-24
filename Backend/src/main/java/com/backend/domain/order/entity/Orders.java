@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders") // 예약어 피하기
+@Table(name = "orders")
 @Getter
 @Setter
 public class Orders {
@@ -29,9 +29,12 @@ public class Orders {
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
     private String status;
+
+    // OrderDetails 엔티티와의 관계 (1:N)
+    // @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<OrderDetails> orderDetails = new ArrayList<>();
 }
