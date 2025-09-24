@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} ?: '관리자 콘솔'">관리자 콘솔</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <!-- 네비게이션 -->
+    <nav class="navbar" th:if="${showNav} != false">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/admin/dashboard">관리자 콘솔</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/admin/dashboard" class="nav-link">대시보드</a>
+                <a href="/admin/products" class="nav-link">상품관리</a>
+                <a href="/admin/orders" class="nav-link">주문관리</a>
+                <button class="nav-link logout-btn" onclick="logout()">로그아웃</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content" th:classappend="${showNav} == false ? 'no-nav' : ''">
+        <div class="container">
+            <!-- 페이지별 컨텐츠가 여기에 삽입됩니다 -->
+            <div th:fragment="content">
+                <!-- 기본 컨텐츠 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 공통 스크립트 -->
+    <script th:src="@{/js/auth.js}"></script>
+    <script th:src="@{/js/ui.js}"></script>
+    
+    <!-- 페이지별 스크립트 삽입 -->
+    <div th:fragment="scripts">
+        <!-- 페이지별 스크립트가 여기에 삽입됩니다 -->
+    </div>
+</body>
+</html>

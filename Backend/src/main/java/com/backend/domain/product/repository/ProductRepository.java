@@ -1,4 +1,7 @@
 package com.backend.domain.product.repository;
 
-public interface ProductRepository {
+import com.backend.domain.product.entity.Product;
+import org.springframework.data.repository.CrudRepository;
+
+public interface ProductRepository extends CrudRepository<Product, Integer> {
 }
