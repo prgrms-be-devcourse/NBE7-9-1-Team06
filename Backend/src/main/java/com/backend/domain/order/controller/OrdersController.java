@@ -74,7 +74,68 @@ public class OrdersController {
         } catch (java.util.NoSuchElementException e) {
             return new RsData<>("404-1", e.getMessage());
         }
-        }
+    }
+
+    // 주문 목록 조회 응답 Body
+    record OrdersListResBody(
+            List<OrdersWithDetailsDto> orders
+    ) {
+        record OrdersWithDetailsDto(
+                OrdersDto ordersDto,
+                List<OrdersDetailDto> orderDetails
+        ) {}
+    }
+
+    // 주문 상세 조회 응답 Body
+    record OrdersDetailResBody(
+            OrdersDto ordersDto,
+            List<OrdersDetailDto> orderDetails
+    ) {}
+
+    // 주문 목록 조회
+    @GetMapping
+    public RsData<OrdersListResBody> getOrdersList(@RequestParam String email) {
+        List<Orders> ordersList = ordersService.findByEmail(email);
+
+        List<OrdersListResBody.OrdersWithDetailsDto> ordersWithDetails = ordersList.stream()
+                .map(orders -> {
+                    boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+                    OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+                    List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                            .map(OrdersDetailDto::new)
+                            .collect(Collectors.toList());
+
+                    return new OrdersListResBody.OrdersWithDetailsDto(ordersDto, orderDetails);
+                })
+                .collect(Collectors.toList());
+
+        return new RsData<>(
+                "200-1",
+                "주문 목록을 조회했습니다.",
+                new OrdersListResBody(ordersWithDetails)
+        );
+    }
+
+    // 특정 주문 조회
+    @GetMapping("/{orderId}")
+    public RsData<OrdersDetailResBody> getOrdersDetail(@PathVariable int orderId) {
+        Orders orders = ordersService.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+        OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+        List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                .map(OrdersDetailDto::new)
+                .collect(Collectors.toList());
+
+        return new RsData<>(
+                "200-1",
+                "%d번 주문을 조회했습니다.".formatted(orders.getId()),
+                new OrdersDetailResBody(ordersDto, orderDetails)
+        );
+    }
 
 
     // 주문 취소
