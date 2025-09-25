@@ -34,7 +34,17 @@ public class OrdersService {
 
     @Transactional
     public void deleteOrders(Orders orders) {
-        ordersRepository.delete(orders);
+        if (!canModifyOrder(orders.getOrderDate())) {
+            throw new IllegalStateException("14시 이후 주문은 취소할 수 없습니다.");
+        }
+
+        if (OrderStatus.CANCELLED.equals(orders.getStatus())) {
+            throw new IllegalStateException("이미 취소된 주문입니다.");
+        }
+
+        // 주문 상태 변경
+        orders.setStatus(OrderStatus.CANCELLED);
+        ordersRepository.save(orders);
     }
 
     public Orders createOrders(String email, String address, int zipCode, List<OrderItem> items) {

@@ -79,14 +79,22 @@ public class OrdersController {
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
-    public RsData<Void> deleteOrders(@PathVariable int id){
-        Orders orders = ordersService.findById(id).get();
-        ordersService.deleteOrders(orders);
+    public RsData<Void> deleteOrders(@PathVariable int orderId) {
+        try {
+            Orders orders = ordersService.findById(orderId)
+                    .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-        return new RsData<Void>(
-                "",
-                "%d번 주문이 취소되었습니다.".formatted(id)
-        );
+            ordersService.deleteOrders(orders);
+
+            return new RsData<>(
+                    "200-1",
+                    "%d번 주문이 취소되었습니다.".formatted(orderId)
+            );
+        } catch (IllegalArgumentException e) {
+            return new RsData<>("400-1", e.getMessage());
+        } catch (IllegalStateException e) {
+            return new RsData<>("403-1", e.getMessage());
+        }
     }
 
 }
