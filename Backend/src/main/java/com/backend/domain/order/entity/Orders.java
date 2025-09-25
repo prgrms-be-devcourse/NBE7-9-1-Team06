@@ -35,7 +35,8 @@ public class Orders {
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     // OrderDetails 엔티티와의 관계 (1:N)
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -44,7 +45,9 @@ public class Orders {
     @PrePersist
     void prePersist() {
         if (orderDate == null) orderDate = LocalDateTime.now();
-        if (status == null) status = "CREATED";
+        if (this.status == null) {
+            this.status = OrderStatus.PENDING;
+        }
         if (totalPrice == null) totalPrice = 0;
     }
 }
