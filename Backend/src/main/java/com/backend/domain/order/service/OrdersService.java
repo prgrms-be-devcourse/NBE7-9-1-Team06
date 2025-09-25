@@ -1,5 +1,6 @@
 package com.backend.domain.order.service;
 
+import com.backend.domain.order.entity.OrderStatus;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.entity.OrdersDetail;
 import com.backend.domain.order.repository.OrdersDetailRepository;
@@ -43,7 +44,7 @@ public class OrdersService {
         order.setAddress(address);
         order.setZipCode(zipCode);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PENDING");
+        order.setStatus(OrderStatus.PENDING);
 
         // 주문 저장 (ID 생성을 위해)
         Orders savedOrder = ordersRepository.save(order);
