@@ -25,9 +25,12 @@ public class OrdersService {
     private final ProductRepository productRepository;
     private static final LocalTime CUTOFF_TIME = LocalTime.of(14, 0); // 14:00 컷오프
 
+    public Long count() {
+        return ordersRepository.count();
+    }
+
     // 주문 아이템 record
     public record OrderItem(int productId, int quantity) {}
-
 
     public Orders createOrders(String email, String address, int zipCode, List<OrderItem> items) {
         // 주문 엔티티 생성

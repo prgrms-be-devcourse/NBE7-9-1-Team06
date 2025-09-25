@@ -1,11 +1,15 @@
 spring:
+  profiles:
+    active: dev
   jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
     hibernate:
       ddl-auto: update
-    defer-datasource-initialization: true   # ← JPA 테이블 생성 후 data.sql 실행
-  sql:
-    init:
-      mode: always
-  h2:
-    console:
-      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

@@ -3,11 +3,13 @@ package com.backend.domain.product.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "PRODUCT")
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
+@Builder
+@Table(name = "PRODUCT")
 public class Product {
 
     @Id
