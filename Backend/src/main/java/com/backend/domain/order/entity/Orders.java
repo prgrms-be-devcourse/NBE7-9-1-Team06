@@ -39,7 +39,7 @@ public class Orders {
     private OrderStatus status;
 
     // OrderDetails 엔티티와의 관계 (1:N)
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrdersDetail> orderDetails;
 
     @PrePersist
@@ -49,5 +49,20 @@ public class Orders {
             this.status = OrderStatus.PENDING;
         }
         if (totalPrice == null) totalPrice = 0;
+    }
+
+    public void addDetail(OrdersDetail d) {
+        orderDetails.add(d);
+        d.setOrders(this);
+    }
+
+    public void removeDetail(OrdersDetail d) {
+        orderDetails.remove(d);
+        d.setOrders(null);
+    }
+
+    public void clearDetails() {
+        for (OrdersDetail d : orderDetails) d.setOrders(null);
+        orderDetails.clear();
     }
 }

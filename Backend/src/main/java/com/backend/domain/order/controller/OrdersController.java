@@ -137,6 +137,62 @@ public class OrdersController {
         );
     }
 
+    // 주문 수정 요청 Body
+    record OrdersUpdateReqBody(
+            String address,
+            Integer zipCode,
+            List<OrderItemReq> items
+    ) {
+        record OrderItemReq(
+                @Positive int productId,
+                @Positive int quantity
+        ) {}
+    }
+
+    // 주문 수정 응답 Body
+    record OrdersUpdateResBody(
+            OrdersDto ordersDto,
+            List<OrdersDetailDto> orderDetails
+    ) {}
+
+    // 주문 수정
+    @PutMapping("/{orderId}")
+    public RsData<OrdersUpdateResBody> updateOrders(
+            @PathVariable int orderId,
+            @RequestBody @Valid OrdersUpdateReqBody reqBody) {
+        try {
+            // OrderItem 변환
+            List<OrdersService.OrderItem> orderItems = reqBody.items().stream()
+                    .map(item -> new OrdersService.OrderItem(item.productId(), item.quantity()))
+                    .collect(Collectors.toList());
+
+            Orders orders = ordersService.updateOrders(
+                    orderId,
+                    reqBody.address(),
+                    reqBody.zipCode(),
+                    orderItems
+            );
+
+            // 응답 데이터 구성
+            boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+            OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+            List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                    .map(OrdersDetailDto::new)
+                    .collect(Collectors.toList());
+
+            return new RsData<>(
+                    "200-1",
+                    "%d번 주문이 수정되었습니다.".formatted(orderId),
+                    new OrdersUpdateResBody(ordersDto, orderDetails)
+            );
+        } catch (IllegalArgumentException e) {
+            return new RsData<>("400-1", e.getMessage());
+        } catch (IllegalStateException e) {
+            return new RsData<>("403-1", e.getMessage());
+        }
+    }
+
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
