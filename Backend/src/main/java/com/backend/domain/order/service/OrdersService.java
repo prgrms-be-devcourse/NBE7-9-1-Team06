@@ -7,9 +7,9 @@ import com.backend.domain.order.repository.OrdersDetailRepository;
 import com.backend.domain.order.repository.OrdersRepository;
 import com.backend.domain.product.entity.Product;
 import com.backend.domain.product.repository.ProductRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,11 +28,6 @@ public class OrdersService {
     // 주문 아이템 record
     public record OrderItem(int productId, int quantity) {}
 
-    public Optional<Orders> findById(int id) {
-        return ordersRepository.findById(id);
-    }
-
-    @Transactional
     public void deleteOrders(Orders orders) {
         if (!canModifyOrder(orders.getOrderDate())) {
             throw new IllegalStateException("14시 이후 주문은 취소할 수 없습니다.");
@@ -40,6 +35,13 @@ public class OrdersService {
 
         if (OrderStatus.CANCELLED.equals(orders.getStatus())) {
             throw new IllegalStateException("이미 취소된 주문입니다.");
+        }
+
+        // 재고 원복
+        for (OrdersDetail detail : orders.getOrderDetails()) {
+            Product product = detail.getProduct();
+            product.setQuantity(product.getQuantity() + detail.getOrderQuantity());
+            productRepository.save(product);
         }
 
         // 주문 상태 변경
@@ -97,7 +99,29 @@ public class OrdersService {
     }
 
 
-    //14시 기준 수정/취소 가능 여부 확인
+    // 이메일로 주문 목록 조회
+    @Transactional(readOnly = true)
+    public List<Orders> findByEmail(String email) {
+        List<Orders> orders = ordersRepository.findByEmailOrderByOrderDateDesc(email);
+        // Lazy Loading 강제 초기화
+        for (Orders order : orders) {
+            order.getOrderDetails().size(); // 강제 로딩
+        }
+        return orders;
+    }
+
+    // ID로 주문 조회
+    @Transactional(readOnly = true)
+    public Optional<Orders> findById(int id) {
+        Optional<Orders> order = ordersRepository.findById(id);
+        if (order.isPresent()) {
+            // Lazy Loading 강제 초기화
+            order.get().getOrderDetails().size();
+        }
+        return order;
+    }
+
+    // 14시 기준 수정/취소 가능 여부 확인
     public boolean canModifyOrder(LocalDateTime orderDate) {
         LocalDateTime today14 = LocalDateTime.now().with(CUTOFF_TIME);
 
