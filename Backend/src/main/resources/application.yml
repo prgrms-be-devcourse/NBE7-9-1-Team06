@@ -1,1 +1,11 @@
-spring.application.name=Backend
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true   # ← JPA 테이블 생성 후 data.sql 실행
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true

@@ -2,20 +2,23 @@ package com.backend.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "ORDERS")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String email;
@@ -35,6 +38,13 @@ public class Orders {
     private String status;
 
     // OrderDetails 엔티티와의 관계 (1:N)
-    // @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<OrderDetails> orderDetails = new ArrayList<>();
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrdersDetail> orderDetails;
+
+    @PrePersist
+    void prePersist() {
+        if (orderDate == null) orderDate = LocalDateTime.now();
+        if (status == null) status = "CREATED";
+        if (totalPrice == null) totalPrice = 0;
+    }
 }
