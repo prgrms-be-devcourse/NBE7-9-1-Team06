@@ -1,6 +1,5 @@
 package com.backend.global.security;
 
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,13 +25,18 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/h2-console/**").permitAll() // H2 콘솔 접근 허용
-                        .requestMatchers("/swagger-ui/**").permitAll() // Swagger 접근 허용
-                        .requestMatchers("/api/v1/admin/login").permitAll() // 관리자 로그인 API 허용
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll() // 상품 조회 API 허용
-                        .requestMatchers(HttpMethod.POST, "/api/v1/orders").permitAll() // 주문 생성 API 허용
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // 관리자 API만 ROLE_ADMIN 권한 필요
-                        .anyRequest().authenticated()) // 그 외 모든 요청은 인증 필요
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/products/**",
+                                "/api/v1/orders/**",
+                                "/api/v1/admin/orders/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/admin/login", "/api/v1/orders").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/**").authenticated()
+                        .anyRequest().authenticated())
                 .csrf((csrf) -> csrf.disable())
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
@@ -43,54 +47,37 @@ public class SecurityConfig {
                                 .authenticationEntryPoint((request, response, authenticationException) -> {
                                     response.setContentType("application/json");
                                     response.setStatus(401);
-                                    response.setCharacterEncoding("UTF-8");
                                     response.getWriter().write(
                                             """
                                                         {
-                                                            "resultCode": "401-1",
-                                                            "msg": "로그인 후 이용해주세요."
+                                                            \"resultCode\": \"401-1\",
+                                                            \"msg\": \"로그인 후 이용해주세요.\"
                                                         }
                                                     """);
                                 })
                                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                    response.setContentType("application/json");
-                                    String accessToken = request.getHeader("Authorization");
-                                    if (accessToken == null) accessToken = "";
-
-                                    if (accessToken.isBlank()) {
-                                        if (request.getCookies() != null) {
-                                            for (Cookie cookie : request.getCookies()) {
-                                                if ("accessToken".equals(cookie.getName())) {
-                                                    accessToken = cookie.getValue();
-                                                    break;
-                                                }
-                                            }
+                                            response.setContentType("application/json");
+                                            response.setStatus(403);
+                                            response.getWriter().write(
+                                                    """
+                                                                {
+                                                                    \"resultCode\": \"403-1\",
+                                                                    \"msg\": \"권한이 없습니다.\"
+                                                                }
+                                                            """);
                                         }
-                                    }
-
-                                    response.setStatus(403);
-                                    response.setCharacterEncoding("UTF-8");
-                                    response.getWriter().write(
-                                            """
-                                                        {
-                                                            "resultCode": "403-1",
-                                                            "msg": "권한이 없습니다."
-                                                        }
-                                                    """);
-                                }
                                 ));
+
         return http.build();
     }
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration =new CorsConfiguration();
-
+        CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://cdpn.io", "http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
 

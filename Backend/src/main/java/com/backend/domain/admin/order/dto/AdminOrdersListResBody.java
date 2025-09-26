@@ -4,7 +4,7 @@ import com.backend.domain.order.dto.OrdersDetailDto;
 
 import java.util.List;
 
-public record OrdersListResBody(
+public record AdminOrdersListResBody(
         List<OrdersWithDetailsDto> orders
 ) {
     public record OrdersWithDetailsDto(

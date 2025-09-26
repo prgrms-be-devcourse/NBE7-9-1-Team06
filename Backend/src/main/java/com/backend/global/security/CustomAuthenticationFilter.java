@@ -54,38 +54,44 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     private void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
+        String method = request.getMethod();
 
         // 인증이 필요 없는 API 경로 설정
-        if (uri.startsWith("/api/v1/products") ||
-                uri.startsWith("/api/v1/orders") ||
+        if (uri.startsWith("/h2-console") ||
                 uri.startsWith("/swagger-ui") ||
-                uri.equals("/api/v1/admin/login")) {
+                uri.equals("/api/v1/admin/login") || // 경로 수정
+                (method.equals("GET") && uri.startsWith("/api/v1/products")) ||
+                (method.equals("GET") && uri.startsWith("/api/v1/orders")) ||
+                (method.equals("POST") && uri.equals("/api/v1/orders"))
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String accessToken = rq.getHeader("Authorization", "");
-        if (accessToken.isBlank()) {
-            accessToken = rq.getCookieValue("accessToken", "");
+        // Authorization 헤더에서 토큰 추출
+        String token = rq.getHeader("Authorization", "");
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
         }
 
-        if (accessToken.isBlank()) {
-            filterChain.doFilter(request, response);
-            return;
+        // 헤더에 토큰이 없으면 쿠키에서 추출
+        if (token.isBlank()) {
+            token = rq.getCookieValue("accessToken", "");
         }
 
-        String jwtToken = accessToken.replaceFirst("Bearer ", "");
+        // 토큰이 없으면 인증 실패
+        if (token.isBlank()) {
+            throw new ServiceException("401-1", "액세스 토큰이 없습니다.");
+        }
 
-        Map<String, Object> payload = authTokenService.getPayloadOrNull(jwtToken);
-
-        if (payload == null) {
+        Map<String, Object> payload = authTokenService.getPayloadOrNull(token);
+        if (payload == null || !payload.containsKey("username") || !payload.containsKey("role")) {
             throw new ServiceException("401-3", "액세스 토큰이 유효하지 않습니다.");
         }
 
         String username = (String) payload.get("username");
         String role = (String) payload.get("role");
 
-        // Admin 엔티티를 조회하거나 SecurityUser 객체를 생성하여 인증
         Admin admin = adminAuthService.findByUsername(username)
                 .orElseThrow(() -> new ServiceException("401-4", "사용자 정보를 찾을 수 없습니다."));
 
@@ -102,10 +108,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
                 user.getAuthorities()
         );
 
-        SecurityContextHolder
-                .getContext()
-                .setAuthentication(authentication);
-
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 }

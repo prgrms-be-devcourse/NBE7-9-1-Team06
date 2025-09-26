@@ -16,7 +16,6 @@ public class AuthTokenService {
     private long expireSeconds;
 
     public String genAccessToken(Admin admin) {
-
         return Ut.jwt.toString(
                 secretPattern,
                 expireSeconds,
@@ -28,23 +27,16 @@ public class AuthTokenService {
         );
     }
 
-    Map<String, Object> payloadOrNull(String jwt) {
-        Map<String, Object> payload = Ut.jwt.payloadOrNull(jwt, secretPattern);
-
-        if(payload == null) {
+    public Map<String, Object> getPayloadOrNull(String jwtToken) {
+        Map<String, Object> payload = Ut.jwt.payloadOrNull(jwtToken, secretPattern);
+        if (payload == null) {
             return null;
         }
-
-        Number idNo = (Number)payload.get("id");
+        Number idNo = (Number) payload.get("id");
         int id = idNo.intValue();
+        String username = (String) payload.get("username");
+        String role = (String) payload.get("role");
 
-        String username = (String)payload.get("username");
-
-        return Map.of("id", id, "username", username);
-    }
-
-    public Map<String, Object> getPayloadOrNull(String jwtToken) {
-        // Ut.jwt 클래스의 payloadOrNull 메서드를 호출하여 페이로드 추출
-        return Ut.jwt.payloadOrNull(jwtToken, secretPattern);
+        return Map.of("id", id, "username", username, "role", role);
     }
 }

@@ -36,5 +36,5 @@ logging:
 
 custom:
   jwt:
-    expireSeconds: "#{30 * 60}"
+    expireSeconds: 1800
     secretPattern: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890

@@ -74,19 +74,144 @@ public class OrdersController {
         } catch (java.util.NoSuchElementException e) {
             return new RsData<>("404-1", e.getMessage());
         }
+    }
+
+    // 주문 목록 조회 응답 Body
+    record OrdersListResBody(
+            List<OrdersWithDetailsDto> orders
+    ) {
+        record OrdersWithDetailsDto(
+                OrdersDto ordersDto,
+                List<OrdersDetailDto> orderDetails
+        ) {}
+    }
+
+    // 주문 상세 조회 응답 Body
+    record OrdersDetailResBody(
+            OrdersDto ordersDto,
+            List<OrdersDetailDto> orderDetails
+    ) {}
+
+    // 주문 목록 조회
+    @GetMapping
+    public RsData<OrdersListResBody> getOrdersList(@RequestParam String email) {
+        List<Orders> ordersList = ordersService.findByEmail(email);
+
+        List<OrdersListResBody.OrdersWithDetailsDto> ordersWithDetails = ordersList.stream()
+                .map(orders -> {
+                    boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+                    OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+                    List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                            .map(OrdersDetailDto::new)
+                            .collect(Collectors.toList());
+
+                    return new OrdersListResBody.OrdersWithDetailsDto(ordersDto, orderDetails);
+                })
+                .collect(Collectors.toList());
+
+        return new RsData<>(
+                "200-1",
+                "주문 목록을 조회했습니다.",
+                new OrdersListResBody(ordersWithDetails)
+        );
+    }
+
+    // 특정 주문 조회
+    @GetMapping("/{orderId}")
+    public RsData<OrdersDetailResBody> getOrdersDetail(@PathVariable int orderId) {
+        Orders orders = ordersService.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+        OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+        List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                .map(OrdersDetailDto::new)
+                .collect(Collectors.toList());
+
+        return new RsData<>(
+                "200-1",
+                "%d번 주문을 조회했습니다.".formatted(orders.getId()),
+                new OrdersDetailResBody(ordersDto, orderDetails)
+        );
+    }
+
+    // 주문 수정 요청 Body
+    record OrdersUpdateReqBody(
+            String address,
+            Integer zipCode,
+            List<OrderItemReq> items
+    ) {
+        record OrderItemReq(
+                @Positive int productId,
+                @Positive int quantity
+        ) {}
+    }
+
+    // 주문 수정 응답 Body
+    record OrdersUpdateResBody(
+            OrdersDto ordersDto,
+            List<OrdersDetailDto> orderDetails
+    ) {}
+
+    // 주문 수정
+    @PutMapping("/{orderId}")
+    public RsData<OrdersUpdateResBody> updateOrders(
+            @PathVariable int orderId,
+            @RequestBody @Valid OrdersUpdateReqBody reqBody) {
+        try {
+            // OrderItem 변환
+            List<OrdersService.OrderItem> orderItems = reqBody.items().stream()
+                    .map(item -> new OrdersService.OrderItem(item.productId(), item.quantity()))
+                    .collect(Collectors.toList());
+
+            Orders orders = ordersService.updateOrders(
+                    orderId,
+                    reqBody.address(),
+                    reqBody.zipCode(),
+                    orderItems
+            );
+
+            // 응답 데이터 구성
+            boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+            OrdersDto ordersDto = new OrdersDto(orders, canModify);
+
+            List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                    .map(OrdersDetailDto::new)
+                    .collect(Collectors.toList());
+
+            return new RsData<>(
+                    "200-1",
+                    "%d번 주문이 수정되었습니다.".formatted(orderId),
+                    new OrdersUpdateResBody(ordersDto, orderDetails)
+            );
+        } catch (IllegalArgumentException e) {
+            return new RsData<>("400-1", e.getMessage());
+        } catch (IllegalStateException e) {
+            return new RsData<>("403-1", e.getMessage());
         }
+    }
 
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
-    public RsData<Void> deleteOrders(@PathVariable int id){
-        Orders orders = ordersService.findById(id).get();
-        ordersService.deleteOrders(orders);
+    public RsData<Void> deleteOrders(@PathVariable int orderId) {
+        try {
+            Orders orders = ordersService.findById(orderId)
+                    .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-        return new RsData<Void>(
-                "",
-                "%d번 주문이 취소되었습니다.".formatted(id)
-        );
+            ordersService.deleteOrders(orders);
+
+            return new RsData<>(
+                    "200-1",
+                    "%d번 주문이 취소되었습니다.".formatted(orderId)
+            );
+        } catch (IllegalArgumentException e) {
+            return new RsData<>("400-1", e.getMessage());
+        } catch (IllegalStateException e) {
+            return new RsData<>("403-1", e.getMessage());
+        }
     }
 
 }

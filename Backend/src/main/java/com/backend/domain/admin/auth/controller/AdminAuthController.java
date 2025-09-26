@@ -41,8 +41,8 @@ public class AdminAuthController {
             @RequestBody LoginRequest loginReqBody
     ) {
 
-        Admin admin = adminAuthService.findByUsername(loginReqBody.username).orElseThrow(
-                () -> new ServiceException("401-1", "존재하지 않는 아이디입니다.")
+        Admin admin = adminAuthService.findByUsername(loginReqBody.username)
+                .orElseThrow(() -> new ServiceException("401-1", "존재하지 않는 아이디입니다.")
         );
 
         adminAuthService.checkPassword(loginReqBody.password, admin.getPassword());
@@ -66,7 +66,7 @@ public class AdminAuthController {
 
         return new RsData<>(
                 "200-1",
-                "로그아웃 되었습니다."
+                "로그아웃 성공"
         );
     }
 

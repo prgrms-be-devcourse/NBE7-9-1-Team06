@@ -2,6 +2,7 @@ package com.backend.global.rq;
 
 import com.backend.domain.admin.auth.entity.Admin;
 import com.backend.domain.admin.auth.service.AdminAuthService;
+import com.backend.global.security.SecurityUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +24,12 @@ public class Rq {
 
     public Admin getActor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication == null || "anonymousUser".equals(authentication.getPrincipal())) {
             return null;
         }
-
-        // 인증된 사용자(관리자)의 username을 가져와 Admin 객체를 반환
-        String username = authentication.getName();
+        SecurityUser principal = (SecurityUser) authentication.getPrincipal();
+        int id = principal.getId();
+        String username = principal.getUsername();
         return adminAuthService.findByUsername(username).orElse(null);
     }
 
@@ -64,11 +64,11 @@ public class Rq {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setDomain("localhost");
-        cookie.setSecure(true);
-        cookie.setAttribute("SameSite", "Strict");
+        // 개발환경에서는 domain 미설정, secure false, SameSite Lax
+        // cookie.setDomain("localhost");
+        cookie.setSecure(false);
+        cookie.setAttribute("SameSite", "Lax");
 
-        // 값이 없다면 해당 쿠키변수를 삭제하라는 뜻
         if (value.isBlank()) {
             cookie.setMaxAge(0);
         }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -15,4 +16,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
 
     @Query("SELECT o FROM Orders o JOIN FETCH o.orderDetails")
     List<Orders> findAllWithDetails();
+
+    List<Orders> findByOrderDateBetween(LocalDateTime start, LocalDateTime end);
 }
