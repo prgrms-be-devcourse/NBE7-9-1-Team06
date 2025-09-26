@@ -23,7 +23,7 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrdersDetailRepository ordersDetailRepository;
     private final ProductRepository productRepository;
-    private static final LocalTime CUTOFF_TIME = LocalTime.of(14, 0); // 14:00 컷오프
+    private static final LocalTime CUTOFF_TIME = LocalTime.of(23, 0); // 14:00 컷오프
 
     public Long count() {
         return ordersRepository.count();
@@ -51,11 +51,11 @@ public class OrdersService {
         int totalPrice = 0;
         for (OrderItem item : items) {
             Product product = productRepository.findById(item.productId())
-                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + item.productId()));
+                    .orElseThrow(() -> new IllegalArgumentException(item.productId()+" 상품을 찾을 수 없습니다: "));
 
             // 재고 확인
             if (product.getQuantity() < item.quantity()) {
-                throw new IllegalArgumentException("재고가 부족합니다: " + product.getProductName());
+                throw new IllegalArgumentException(product.getProductName()+ " 상품의 재고가 부족합니다.");
             }
 
             // 주문 상세 생성
@@ -110,13 +110,9 @@ public class OrdersService {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다: " + orderId));
 
-        // 14시 이후 수정 불가 체크
-        if (!canModifyOrder(order.getOrderDate())) {
-            throw new IllegalStateException("14시 이후에는 주문을 수정할 수 없습니다.");
-        }
-
+        // 상태 기반 수정 가능 여부 확인
         if (!order.getStatus().isCustomerModifiable()) {
-            throw new IllegalStateException("진행 중인 주문은 수정할 수 없습니다.");
+            throw new IllegalStateException("확정된 주문은 수정할 수 없습니다.");
         }
 
         // 요청 아이템 productId별 합산(중복 productId 방지)
@@ -148,7 +144,7 @@ public class OrdersService {
 
                 if (diff > 0) { // 수량 증가 → 재고 차감
                     if (product.getQuantity() < diff) {
-                        throw new IllegalArgumentException("재고가 부족합니다: " + product.getProductName());
+                        throw new IllegalArgumentException(product.getProductName()+" 상품의 재고가 부족합니다." );
                     }
                     product.setQuantity(product.getQuantity() - diff);
                 } else if (diff < 0) { // 수량 감소 → 재고 복원
@@ -201,8 +197,9 @@ public class OrdersService {
 
 
     public void deleteOrders(Orders orders) {
-        if (!canModifyOrder(orders.getOrderDate())) {
-            throw new IllegalStateException("14시 이후에는 주문을 취소할 수 없습니다.");
+        // 상태 기반 취소 가능 여부 확인
+        if (!orders.getStatus().isCustomerModifiable()) {
+            throw new IllegalStateException("확정된 주문은 취소할 수 없습니다.");
         }
 
         if (OrderStatus.CANCELLED.equals(orders.getStatus())) {
@@ -222,16 +219,18 @@ public class OrdersService {
     }
 
 
-    // 14시 기준 수정/취소 가능 여부 확인
-    public boolean canModifyOrder(LocalDateTime orderDate) {
-        LocalDateTime today14 = LocalDateTime.now().with(CUTOFF_TIME);
+    // 주문 수정/취소 가능 여부 확인
+    public boolean canModifyOrder(Orders order) {
+        return order.getStatus().isCustomerModifiable();
+    }
 
-        // 오늘 14시 이전에 주문했고, 현재 시간이 오늘 14시 이전이면 수정 가능
-        if (orderDate.toLocalDate().equals(LocalDateTime.now().toLocalDate())) {
-            return LocalDateTime.now().isBefore(today14);
+    // 14시 기준 주문 자동 확정 처리
+    public void confirmPendingOrders() {
+        List<Orders> pendingOrders = ordersRepository.findByStatus(OrderStatus.PENDING);
+
+        for (Orders order : pendingOrders) {
+            order.setStatus(OrderStatus.CONFIRMED);
+            ordersRepository.save(order);
         }
-
-        // 과거 주문은 수정 불가
-        return false;
     }
 }
