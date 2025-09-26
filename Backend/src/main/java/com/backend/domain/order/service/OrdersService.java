@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,6 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrdersDetailRepository ordersDetailRepository;
     private final ProductRepository productRepository;
-    private static final LocalTime CUTOFF_TIME = LocalTime.of(14, 0); // 14:00 컷오프
 
     public Long count() {
         return ordersRepository.count();
@@ -42,11 +40,6 @@ public class OrdersService {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
 
-        // 주문 저장 (ID 생성을 위해)
-        Orders savedOrder = ordersRepository.save(order);
-
-        // orderDetails 리스트 초기화
-        savedOrder.setOrderDetails(new ArrayList<>());
 
         // 총 가격 계산 및 주문 상세 생성
         int totalPrice = 0;
@@ -57,32 +50,26 @@ public class OrdersService {
             if (item.quantity() <= 0) {
                 throw new ServiceException("400-1", "수량은 1 이상이어야 합니다.");
             }
-            // 재고 확인
             if (product.getQuantity() < item.quantity()) {
                 throw new ServiceException("400-1", product.getProductName() + " 상품의 재고가 부족합니다.");
             }
 
             // 주문 상세 생성
             OrdersDetail orderDetail = new OrdersDetail();
-            orderDetail.setOrders(savedOrder);
             orderDetail.setProduct(product);
             orderDetail.setOrderQuantity(item.quantity());
             orderDetail.setPrice(product.getProductPrice() * item.quantity());
-            OrdersDetail savedOrderDetail = ordersDetailRepository.save(orderDetail);
+            order.addDetail(orderDetail);
 
-            // 양방향 관계 설정
-            savedOrder.getOrderDetails().add(savedOrderDetail);
 
             // 재고 차감
             product.setQuantity(product.getQuantity() - item.quantity());
-            productRepository.save(product);
-
             totalPrice += orderDetail.getPrice();
         }
 
         // 총 가격 업데이트
-        savedOrder.setTotalPrice(totalPrice);
-        return ordersRepository.save(savedOrder);
+        order.setTotalPrice(totalPrice);
+        return ordersRepository.save(order);
     }
 
 
@@ -115,7 +102,7 @@ public class OrdersService {
     @Transactional
     public Orders updateOrders(int orderId, String address, Integer zipCode, List<OrderItem> items) {
         Orders order = ordersRepository.findById(orderId)
-                .orElseThrow(() -> new ServiceException("404-1", "%d번 주문을 찾을 수 없습니다: ".formatted(orderId)));
+                .orElseThrow(() -> new ServiceException("404-1", "%d번 주문을 찾을 수 없습니다.".formatted(orderId)));
 
         // 상태 기반 수정 가능 여부 확인
         if (!order.getStatus().isCustomerModifiable()) {
@@ -169,16 +156,12 @@ public class OrdersService {
                     throw new ServiceException("400-1", product.getProductName()+ "상품의 재고가 부족합니다.");
                 }
                 product.setQuantity(product.getQuantity() - newQty);
-                productRepository.save(product);
 
                 OrdersDetail orderDetail = new OrdersDetail();
-                orderDetail.setOrders(order);
                 orderDetail.setProduct(product);
                 orderDetail.setOrderQuantity(newQty);
                 orderDetail.setPrice(product.getProductPrice() * newQty);
-
-                order.getOrderDetails().add(orderDetail);
-                ordersDetailRepository.save(orderDetail);
+                order.addDetail(orderDetail);
 
                 totalPrice += orderDetail.getPrice();
             }
@@ -188,10 +171,7 @@ public class OrdersService {
         for (OrdersDetail toRemove : current.values()) {
             Product product = toRemove.getProduct();
             product.setQuantity(product.getQuantity() + toRemove.getOrderQuantity());
-            productRepository.save(product);
-
-            order.getOrderDetails().remove(toRemove);
-            toRemove.setOrders(null);
+            order.removeDetail(toRemove);
         }
 
         // 주소/우편번호/총액 수정
@@ -217,7 +197,6 @@ public class OrdersService {
         for (OrdersDetail detail : orders.getOrderDetails()) {
             Product product = detail.getProduct();
             product.setQuantity(product.getQuantity() + detail.getOrderQuantity());
-            productRepository.save(product);
         }
 
         // 주문 상태 변경
