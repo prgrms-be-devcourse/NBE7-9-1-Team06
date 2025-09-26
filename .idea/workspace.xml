@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="22069f5c-a603-4f6e-af1d-f510ecb91b93" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/controller/ApiV1AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/controller/ApiV1AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/ApiV1OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/ApiV1OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrderDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrderDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/OrderDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/OrderDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrderRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/global/BaseEntity.java" beforeDir="false" />
-    </list>
+    <list default="true" id="22069f5c-a603-4f6e-af1d-f510ecb91b93" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,9 +38,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Spring Repository" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -77,10 +63,10 @@
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
@@ -94,6 +80,7 @@
   "keyToString": {
     "Downloaded.Files.Path.Enabled": "false",
     "Gradle.Build Backend.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
@@ -117,7 +104,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "editor.preferences.import",
+    "settings.editor.selected.configurable": "File.Encoding",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -126,7 +113,12 @@
       <recent name="C:\Users\nx202\IdeaProjects\NBE7-9-1-Team06\Backend\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\nx202\IdeaProjects\NBE7-9-1-Team06\Backend" />
       <recent name="C:\Users\nx202\IdeaProjects\NBE7-9-1-Team06\Backend\src\main\java\com\backend\domain\product\" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.backend" />
+      <recent name="" />
     </key>
   </component>
   <component name="RunManager">
@@ -154,7 +146,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758674444149</updated>
-      <workItem from="1758674445664" duration="21917000" />
+      <workItem from="1758674445664" duration="27588000" />
+      <workItem from="1758758463409" duration="31403000" />
     </task>
     <servers />
   </component>

@@ -1,37 +1,34 @@
 package com.backend.domain.product.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Entity
+@Table(name = "PRODUCT")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Entity
-@Builder
-@Table(name = "product")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private int id;
+    private Integer id;
 
-    @Column(name = "product_name")
-    private String name;
+    @Column(name = "product_name", nullable = false)
+    private String productName;
 
-    @Column(name = "product_price")
-    private int price;
+    @Column(name = "product_price", nullable = false)
+    private Integer productPrice;
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "image_url")
     private String imageUrl;
-
 }

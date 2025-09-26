@@ -17,8 +17,8 @@ public class ProductService {
 
     public Product addProduct(String name, int price, int quantity, String description, String imageUrl) {
         Product newProduct = Product.builder()
-                .name(name)
-                .price(price)
+                .productName(name)
+                .productPrice(price)
                 .quantity(quantity)
                 .description(description)
                 .imageUrl(imageUrl)
