@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,14 +41,12 @@ public class Orders {
 
     // OrderDetails 엔티티와의 관계 (1:N)
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrdersDetail> orderDetails;
+    private List<OrdersDetail> orderDetails = new ArrayList<>();
 
     @PrePersist
     void prePersist() {
         if (orderDate == null) orderDate = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = OrderStatus.PENDING;
-        }
+        if (this.status == null) this.status = OrderStatus.PENDING;
         if (totalPrice == null) totalPrice = 0;
     }
 
@@ -62,7 +61,6 @@ public class Orders {
     }
 
     public void clearDetails() {
-        for (OrdersDetail d : orderDetails) d.setOrders(null);
-        orderDetails.clear();
+        for (OrdersDetail d : new ArrayList<>(orderDetails)) removeDetail(d);
     }
 }
