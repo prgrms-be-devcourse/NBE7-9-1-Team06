@@ -57,7 +57,7 @@ public class OrdersController {
                     reqBody.zipCode(),
                     orderItems
             );
-            boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+            boolean canModify = ordersService.canModifyOrder(orders);
             OrdersDto ordersDto = new OrdersDto(orders, canModify);
 
             List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
@@ -71,8 +71,6 @@ public class OrdersController {
             );
         } catch (IllegalArgumentException e) {
             return new RsData<>("400-1", e.getMessage());
-        } catch (java.util.NoSuchElementException e) {
-            return new RsData<>("404-1", e.getMessage());
         }
     }
 
@@ -99,7 +97,7 @@ public class OrdersController {
 
         List<OrdersListResBody.OrdersWithDetailsDto> ordersWithDetails = ordersList.stream()
                 .map(orders -> {
-                    boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+                    boolean canModify = ordersService.canModifyOrder(orders);
                     OrdersDto ordersDto = new OrdersDto(orders, canModify);
 
                     List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
@@ -123,7 +121,7 @@ public class OrdersController {
         Orders orders = ordersService.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-        boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+        boolean canModify = ordersService.canModifyOrder(orders);
         OrdersDto ordersDto = new OrdersDto(orders, canModify);
 
         List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
@@ -174,7 +172,7 @@ public class OrdersController {
             );
 
             // 응답 데이터 구성
-            boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+            boolean canModify = ordersService.canModifyOrder(orders);
             OrdersDto ordersDto = new OrdersDto(orders, canModify);
 
             List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
