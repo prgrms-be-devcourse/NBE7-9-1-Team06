@@ -4,6 +4,7 @@ import com.backend.domain.order.dto.OrdersDetailDto;
 import com.backend.domain.order.dto.OrdersDto;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
+import com.backend.global.exception.ServiceException;
 import com.backend.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -119,7 +120,7 @@ public class OrdersController {
     @GetMapping("/{orderId}")
     public RsData<OrdersDetailResBody> getOrdersDetail(@PathVariable int orderId) {
         Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ServiceException("404-1", "%d번 주문을 찾을 수 없습니다.".formatted(orderId)));
 
         boolean canModify = ordersService.canModifyOrder(orders);
         OrdersDto ordersDto = new OrdersDto(orders, canModify);
@@ -158,58 +159,49 @@ public class OrdersController {
     public RsData<OrdersUpdateResBody> updateOrders(
             @PathVariable int orderId,
             @RequestBody @Valid OrdersUpdateReqBody reqBody) {
-        try {
-            // OrderItem 변환
-            List<OrdersService.OrderItem> orderItems = reqBody.items().stream()
-                    .map(item -> new OrdersService.OrderItem(item.productId(), item.quantity()))
-                    .collect(Collectors.toList());
 
-            Orders orders = ordersService.updateOrders(
-                    orderId,
-                    reqBody.address(),
-                    reqBody.zipCode(),
-                    orderItems
-            );
+        // OrderItem 변환
+        List<OrdersService.OrderItem> orderItems = reqBody.items().stream()
+                .map(item -> new OrdersService.OrderItem(item.productId(), item.quantity()))
+                .collect(Collectors.toList());
 
-            // 응답 데이터 구성
-            boolean canModify = ordersService.canModifyOrder(orders);
-            OrdersDto ordersDto = new OrdersDto(orders, canModify);
+        Orders orders = ordersService.updateOrders(
+                orderId,
+                reqBody.address(),
+                reqBody.zipCode(),
+                orderItems
+        );
 
-            List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
-                    .map(OrdersDetailDto::new)
-                    .collect(Collectors.toList());
+        // 응답 데이터 구성
+        boolean canModify = ordersService.canModifyOrder(orders);
+        OrdersDto ordersDto = new OrdersDto(orders, canModify);
 
-            return new RsData<>(
-                    "200-1",
-                    "%d번 주문이 수정되었습니다.".formatted(orderId),
-                    new OrdersUpdateResBody(ordersDto, orderDetails)
-            );
-        } catch (IllegalArgumentException e) {
-            return new RsData<>("400-1", e.getMessage());
-        } catch (IllegalStateException e) {
-            return new RsData<>("403-1", e.getMessage());
-        }
+        List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
+                .map(OrdersDetailDto::new)
+                .collect(Collectors.toList());
+
+        return new RsData<>(
+                "200-1",
+                "%d번 주문이 수정되었습니다.".formatted(orderId),
+                new OrdersUpdateResBody(ordersDto, orderDetails)
+        );
     }
 
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
     public RsData<Void> deleteOrders(@PathVariable int orderId) {
-        try {
-            Orders orders = ordersService.findById(orderId)
-                    .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-            ordersService.deleteOrders(orders);
+        Orders orders = ordersService.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-            return new RsData<>(
-                    "200-1",
-                    "%d번 주문이 취소되었습니다.".formatted(orderId)
-            );
-        } catch (IllegalArgumentException e) {
-            return new RsData<>("400-1", e.getMessage());
-        } catch (IllegalStateException e) {
-            return new RsData<>("403-1", e.getMessage());
-        }
+        ordersService.deleteOrders(orders);
+
+        return new RsData<>(
+                "200-1",
+                "%d번 주문이 취소되었습니다.".formatted(orderId)
+        );
+
     }
 
 }
