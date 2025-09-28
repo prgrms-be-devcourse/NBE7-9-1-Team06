@@ -13,6 +13,12 @@ public class ServiceException extends RuntimeException {
         this.msg = msg;
     }
 
+    public ServiceException(ErrorCode errorCode) {
+        super("%s : %s".formatted(errorCode.getResultCode(), errorCode.getMsg()));
+        this.resultCode = errorCode.getResultCode();
+        this.msg = errorCode.getMsg();
+    }
+
     public String getResultCode() {
         return resultCode;
     }

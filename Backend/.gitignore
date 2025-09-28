@@ -38,3 +38,6 @@ out/
 
 ###custom###
 .DS_Store
+.idea
+.db_dev.mv.db
+.db_dev.trace.db

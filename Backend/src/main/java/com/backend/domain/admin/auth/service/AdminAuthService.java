@@ -3,6 +3,7 @@ package com.backend.domain.admin.auth.service;
 import com.backend.domain.admin.auth.entity.Admin;
 import com.backend.domain.admin.auth.repository.AdminAuthRepository;
 import com.backend.global.exception.ServiceException;
+import com.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class AdminAuthService {
 
     public void checkPassword(String inputPassword, String rawPassword) {
         if(!passwordEncoder.matches(inputPassword, rawPassword)) {
-            throw new ServiceException("401-2", "비밀번호가 일치하지 않습니다.");
+            throw new ServiceException(ErrorCode.PASSWORD_NOT_MATCH);
         }
     }
 
@@ -28,7 +29,7 @@ public class AdminAuthService {
 
         adminAuthRepository.findByUsername(username)
                 .ifPresent(m -> {
-                    throw new ServiceException("409-1", "이미 사용중인 아이디입니다.");
+                    throw new ServiceException(ErrorCode.ALREADY_USED_USERNAME);
                 });
 
         Admin member = new Admin(username, passwordEncoder.encode(password));

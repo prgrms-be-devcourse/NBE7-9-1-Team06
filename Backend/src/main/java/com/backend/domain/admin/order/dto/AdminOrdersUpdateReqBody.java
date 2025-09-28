@@ -9,7 +9,7 @@ public record AdminOrdersUpdateReqBody(
             Integer zipCode,
             List<OrderItemReq> items
     ) {
-        record OrderItemReq(
+        public record OrderItemReq(
                 @Positive int productId,
                 @Positive int quantity
         ) {}

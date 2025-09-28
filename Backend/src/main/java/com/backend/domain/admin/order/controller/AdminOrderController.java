@@ -2,9 +2,11 @@ package com.backend.domain.admin.order.controller;
 
 import com.backend.domain.admin.order.dto.AdminOrdersDetailResBody;
 import com.backend.domain.admin.order.dto.AdminOrdersListResBody;
+import com.backend.domain.admin.order.dto.AdminOrdersUpdateReqBody;
 import com.backend.domain.admin.order.service.AdminOrdersService;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
+import com.backend.global.exception.ErrorCode;
 import com.backend.global.exception.ServiceException;
 import com.backend.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +58,7 @@ public class AdminOrderController {
     ) {
 
         Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new ServiceException("401 - 2","존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 
         adminOrdersService.adminDeleteOrder(orders);
 
@@ -66,20 +68,14 @@ public class AdminOrderController {
         );
     }
 
-//    //주문 수정
-//    @PutMapping("/{orderId}")
-//    public RsData<AdminOrdersUpdateResBody> updateOrder(
-//            @PathVariable int orderId,
-//            @RequestBody AdminOrdersUpdateReqBody reqBody
-//    ) {
-//
-//        AdminOrdersListResBody adminOrdersListResBody = adminOrderService.updateOrders(orderId, reqBody);
-//        return new RsData<>(
-//                "200-1",
-//                "%번 주문이 수정되었습니다.".formatted(),
-//                adminOrdersListResBody
-//        );
-//    }
+    @PutMapping("/{orderId}")
+    public RsData<Void> updateOrder(
+            @PathVariable int orderId,
+            @RequestBody AdminOrdersUpdateReqBody reqBody
+    ) {
+        adminOrdersService.adminUpdateOrder(orderId, reqBody);
+        return new RsData<>("200-1", "%d번 주문이 수정되었습니다.".formatted(orderId));
+    }
 
 //    // 합배송 처리
 //    @PostMapping("/merge")

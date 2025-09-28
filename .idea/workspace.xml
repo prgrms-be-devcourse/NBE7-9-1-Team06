@@ -5,27 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22069f5c-a603-4f6e-af1d-f510ecb91b93" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateReqBody.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateResBody.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrdersService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/controller/AdminAuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/controller/AdminAuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/service/AuthTokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/service/AuthTokenService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/service/AdminAuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/auth/service/AdminAuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/controller/AdminOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/controller/AdminOrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/OrdersListResBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersListResBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrderService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrdersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrdersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersListResBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersListResBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateReqBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateReqBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrdersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrdersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Orders.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Orders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/config/.gitkeep" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersDetailResBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/rq/Rq.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/rq/Rq.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/security/CustomAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/security/CustomAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_dev.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/db_dev.mv.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_dev.trace.db" beforeDir="false" afterPath="$PROJECT_DIR$/db_dev.trace.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ServiceException.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ServiceException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/resources/application-test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/resources/application-test.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
