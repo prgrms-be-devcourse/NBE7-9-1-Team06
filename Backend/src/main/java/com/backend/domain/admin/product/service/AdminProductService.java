@@ -60,6 +60,7 @@ public class AdminProductService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
 
         try {
+            product.setQuantity(0);
             productRepository.delete(product);
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.PRODUCT_DELETE_FAILED);
