@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul style="color:red">
+</ul>
+
+<form method="POST" action="/admin/items/write">
+    <label>상품명</label>
+    <br>
+    <input type="text" name="name">
+    <br>
+    <label>가격</label>
+    <br>
+    <input type="text" name="가격">
+    <br>
+    <label>재고량</label>
+    <br>
+    <input type="text" name="재고">
+    <br>
+    <label>이미지 주소</label>
+    <br>
+    <input type="text" name="이미지">
+    <br>
+    <label>상세 설명</label>
+    <br>
+    <textarea name="description"></textarea>
+    <br>
+    <input type="submit" value="작성">
+</form>
+
+<script>
+    const li = document.querySelector("ul li");
+    const errorFieldName = li.dataset.errorFieldName;
+
+    if(errorFieldName.length > 0) {
+        const form = document.querySelector("form");
+        form[errorFieldName].focus();
+    }
+</script>
+</body>
+</html>

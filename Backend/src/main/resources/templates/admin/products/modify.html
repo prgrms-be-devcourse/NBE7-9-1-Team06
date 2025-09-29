@@ -1,0 +1,42 @@
+<html lang="ko" layout:decorate="~{layout}">
+<th:block layout:fragment="content">
+    <form method="POST" th:action="@{/admin/items/{postId}(postId=${post.id})}" th:object="${form}">
+
+        <input type="hidden" name="_method" value="PUT">
+        <h2>번호 :
+            <th:block th:text="${post.id}"></th:block>
+        </h2>
+        <div>
+            <label for="">상품명</label>
+            <div>
+                <input type="text" placeholder="제품 이름을 입력해주세요." th:field="*{product_name}" autoFocus>
+            </div>
+        </div>
+        <div>
+            <label for="">가격</label>
+            <div>
+                <input type="text" placeholder="제품 가격을 입력해주세요." th:field="*{product_price}" autoFocus>
+            </div>
+        </div>
+        <div>
+            <label for="">재고</label>
+            <div>
+                <input type="text" placeholder="제품 재고를 입력해주세요." th:field="*{quantity}" autoFocus>
+            </div>
+        </div>
+        <div>
+            <label for="">이미지</label>
+            <div>
+                <input type="text" placeholder="제품 이미지 주소를 입력해주세요." th:field="*{image_url}" autoFocus>
+            </div>
+        </div>
+        <div>
+            <label for="">상세 설명</label>
+            <div>
+                <textarea placeholder="제품 상세 설명을 입력해주세요." th:field="*{description}"></textarea>
+            </div>
+        </div>
+        <input type="submit" value="수정 완료">
+    </form>
+</th:block>
+</html>

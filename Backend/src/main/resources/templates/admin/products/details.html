@@ -1,0 +1,37 @@
+<html lang="ko" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="|글 상세|"></title>
+</head>
+<th:block layout:fragment="content">
+    <h1>제품 상세</h1>
+
+    <h2>번호 :
+        <th:block th:text="${post.id}">번호</th:block>
+    </h2>
+    <h2>제품 이름 :
+        <th:block th:text="${post.product_name}">상품명</th:block>
+    </h2>
+    <h2>제품 가격 :
+        <th:block th:text="${post.product_price}">가격</th:block>
+    </h2>
+    <h2>제품 재고 :
+        <th:block th:text="${post.quantity}">재고</th:block>
+    </h2>
+    <h2>제품 설명 :
+        <th:block th:text="${post.description}">설명</th:block>
+    </h2>
+    <h3>내용</h3>
+    <div th:text="${post.image_url}">사진</div>
+    <div>
+        <a th:href="@{/admin/products}">목록</a>
+        <a th:href="@{/admin/products/{id}/modify(id=${post.id})}">수정</a>
+        <a method="DELETE" th:href="@{/admin/products/{id}(id=${post.id})}">삭제</a>
+    </div>
+    <hr>
+    <script>
+
+    </script>
+    <hr>
+
+</th:block>
+</html>
