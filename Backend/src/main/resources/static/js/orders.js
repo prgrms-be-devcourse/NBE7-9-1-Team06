@@ -76,21 +76,35 @@ function createOrderRow(orderWithDetails) {
   // OrdersWithDetailsDto에서 실제 주문 데이터 추출
   const order = orderWithDetails.ordersDto;
 
-  // 주소 조합 (address + addressDetail)
-  const fullAddress = [order.address, order.addressDetail]
-    .filter((addr) => addr && addr.trim())
-    .join(" ");
+  // 주문 ID (OrdersDto에서는 'id' 필드) - number 타입을 문자열로 변환
+  const orderId = String(order.id);
+
+  // 배송상태 (OrdersDto에서는 'status' 필드)
+  const status = order.status;
+
+  // 주소 (OrdersDto에는 address만 있음)
+  const address = order.address || "";
+
+  console.log("전체 주문 데이터:", orderWithDetails);
+  console.log("주문 데이터 (ordersDto):", order);
+  console.log("주문 ID:", orderId, "타입:", typeof orderId);
+  console.log("배송상태:", status);
+  console.log("주문 객체의 모든 키:", Object.keys(order));
+
+  if (!orderId || orderId === "undefined") {
+    console.error("주문 ID가 없습니다:", order);
+  }
 
   row.innerHTML = `
-        <td>${escapeHtml(order.orderId)}</td>
+        <td>${escapeHtml(orderId || "N/A")}</td>
         <td>${escapeHtml(order.email)}</td>
-        <td>${escapeHtml(fullAddress)}</td>
+        <td>${escapeHtml(address)}</td>
         <td>${formatPrice(order.totalPrice)}</td>
-        <td>복</td>
+        <td>${escapeHtml(status || "알 수 없음")}</td>
         <td class="text-right">
-            <button class="btn btn-danger btn-sm" onclick="cancelOrder('${
-              order.orderId
-            }')">
+            <button class="btn btn-danger btn-sm" onclick="cancelOrder('${orderId}')" ${
+    !orderId || orderId === "undefined" ? "disabled" : ""
+  }>
                 주문 취소
             </button>
         </td>
@@ -105,6 +119,12 @@ function createOrderRow(orderWithDetails) {
  */
 async function cancelOrder(orderId) {
   try {
+    console.log("주문 취소 요청 - ID:", orderId, "타입:", typeof orderId);
+
+    if (!orderId || orderId === "undefined" || orderId === "") {
+      throw new Error("유효하지 않은 주문 ID입니다.");
+    }
+
     const confirmed = await confirm(
       `주문 ID ${orderId}를 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`
     );

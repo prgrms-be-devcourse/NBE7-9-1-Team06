@@ -1,7 +1,8 @@
 package com.backend.domain.admin.controller;
 
 import com.backend.domain.admin.auth.entity.Admin;
-import com.backend.global.rq.Rq;
+import com.backend.domain.admin.auth.service.AdminAuthService;
+import com.backend.global.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class AdminViewController {
 
-    private final Rq rq;
+    private final AdminAuthService adminAuthService;
 
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error, Model model) {
@@ -26,7 +27,7 @@ public class AdminViewController {
 
     @GetMapping("/admin/dashboard")
     public String dashboard(Model model) {
-        Admin admin = rq.getActor();
+        Admin admin = getCurrentAdmin();
         if (admin != null) {
             model.addAttribute("admin", admin);
         }
@@ -35,7 +36,7 @@ public class AdminViewController {
 
     @GetMapping("/admin/products")
     public String products(Model model) {
-        Admin admin = rq.getActor();
+        Admin admin = getCurrentAdmin();
         if (admin != null) {
             model.addAttribute("admin", admin);
         }
@@ -44,10 +45,22 @@ public class AdminViewController {
 
     @GetMapping("/admin/orders")
     public String orders(Model model) {
-        Admin admin = rq.getActor();
+        Admin admin = getCurrentAdmin();
         if (admin != null) {
             model.addAttribute("admin", admin);
         }
         return "admin/orders";
+    }
+
+    private Admin getCurrentAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && 
+            !"anonymousUser".equals(authentication.getPrincipal()) &&
+            authentication.getPrincipal() instanceof SecurityUser) {
+            
+            SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+            return adminAuthService.findByUsername(securityUser.getUsername()).orElse(null);
+        }
+        return null;
     }
 }

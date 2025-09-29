@@ -56,19 +56,27 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
+        logger.debug("CustomAuthenticationFilter - URI: " + uri + ", Method: " + method);
+
         // 인증이 필요 없는 경로 설정
-        if (uri.startsWith("/h2-console") ||
+        boolean isExcluded = uri.startsWith("/h2-console") ||
                 uri.startsWith("/swagger-ui") ||
                 uri.equals("/login") ||
                 (method.equals("POST") && uri.equals("/login")) || // Spring Security 폼 로그인 허용
-                uri.startsWith("/admin/") || // Thymeleaf 관리자 페이지는 Spring Security가 처리
+                uri.startsWith("/admin") || // Thymeleaf 관리자 페이지는 Spring Security가 처리 (/admin/ 포함)
                 uri.startsWith("/css/") ||
                 uri.startsWith("/js/") ||
                 uri.equals("/api/v1/admin/login") ||
                 (method.equals("GET") && uri.startsWith("/api/v1/products")) ||
                 (method.equals("GET") && uri.startsWith("/api/v1/orders")) ||
-                (method.equals("POST") && uri.equals("/api/v1/orders"))
-        ) {
+                (method.equals("GET") && uri.startsWith("/api/v1/admin/orders")) ||
+                (method.equals("POST") && uri.equals("/api/v1/orders")) ||
+                uri.startsWith("/api/v1/admin/products");
+
+        logger.debug("CustomAuthenticationFilter - Is excluded: " + isExcluded);
+
+        if (isExcluded) {
+            logger.debug("CustomAuthenticationFilter - Skipping JWT authentication for: " + method + " " + uri);
             filterChain.doFilter(request, response);
             return;
         }
