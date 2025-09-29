@@ -82,7 +82,17 @@ export function SidePanel({
   function isFormValid() {
     return validateCustomerInfo();
   }
+
+  function getDeliveryDate(orderTime: Date) {
+    const hour = orderTime.getHours();
+    if (hour >= 14) {
+      return "TOMORROW";
+    } else {
+      return "TODAY";
+    }
+  }
   const [showOrderComplete, setShowOrderComplete] = useState(false);
+  const [orderTime, setOrderTime] = useState<Date | null>(null);
 
   async function handleCheckout() {
     if (items.length === 0) return;
@@ -107,6 +117,7 @@ export function SidePanel({
       }
 
       // 주문 성공 시 완료 화면 표시
+      setOrderTime(new Date());
       setShowOrderComplete(true);
     } catch (error) {
       console.error("주문 생성 오류:", error);
@@ -120,6 +131,7 @@ export function SidePanel({
       onOrderComplete();
     }
     setShowOrderComplete(false);
+    setOrderTime(null);
     setCustomerInfo({ email: "", zipCode: "", address: "", detailAddress: "" });
     setValidationErrors({
       email: "",
@@ -150,9 +162,81 @@ export function SidePanel({
           <div className="side-content">
             <div style={{ textAlign: "center", padding: "20px 0" }}>
               <h3>주문이 완료되었습니다!</h3>
-              <p style={{ margin: "12px 0", color: "#666" }}>
-                배송 예정: TODAY | TOMORROW
-              </p>
+              <div style={{ margin: "12px 0" }}>
+                <p style={{ margin: "8px 0", color: "#666" }}>배송 예정:</p>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "16px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      backgroundColor:
+                        orderTime && getDeliveryDate(orderTime) === "TODAY"
+                          ? "#4ade80"
+                          : "#e5e7eb",
+                      color:
+                        orderTime && getDeliveryDate(orderTime) === "TODAY"
+                          ? "white"
+                          : "#6b7280",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        backgroundColor:
+                          orderTime && getDeliveryDate(orderTime) === "TODAY"
+                            ? "white"
+                            : "#9ca3af",
+                      }}
+                    />
+                    TODAY
+                  </div>
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "20px",
+                      backgroundColor:
+                        orderTime && getDeliveryDate(orderTime) === "TOMORROW"
+                          ? "#4ade80"
+                          : "#e5e7eb",
+                      color:
+                        orderTime && getDeliveryDate(orderTime) === "TOMORROW"
+                          ? "white"
+                          : "#6b7280",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        backgroundColor:
+                          orderTime && getDeliveryDate(orderTime) === "TOMORROW"
+                            ? "white"
+                            : "#9ca3af",
+                      }}
+                    />
+                    TOMORROW
+                  </div>
+                </div>
+              </div>
               <button
                 className="checkout-button"
                 onClick={handleFinalOrderComplete}
