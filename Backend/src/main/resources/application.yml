@@ -1,40 +1,28 @@
-spring:
-  profiles:
-    active: dev
-  thymeleaf:
-    cache: false
-    prefix: file:src/main/resources/templates/
-  output:
-    ansi:
-      enabled: always
-  datasource:
-    hikari:
-      auto-commit: false
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
+application:
+  name: Backend
+
+datasource:
+  url: jdbc:mysql://localhost:3306/coffee_shop?characterEncoding=UTF-8
+  username: root
+  password: lldj123414
+  driver-class-name: com.mysql.cj.jdbc.Driver
+
+jpa:
+  hibernate:
+    ddl-auto: update
+  properties:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
 
-springdoc:
-  default-produces-media-type: application/json
+sql:
+  init:
+    mode: always
 
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: TRACE
-    org.hibernate.orm.jdbc.extract: TRACE
-    org.springframework.transaction.interceptor: TRACE
-    com.rest1: DEBUG
+h2:
+  console:
+    enabled: true
 
 custom:
   jwt:
     expireSeconds: 1800
-    secretPattern: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890
+    secretPattern: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890g
