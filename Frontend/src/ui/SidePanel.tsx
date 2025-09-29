@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CartItem } from "../types";
-import { createOrder, type OrderRequest } from "../mockData";
+import { createOrder, type OrderRequest } from "../services";
 import { formatKRW } from "../utils";
 
 type SidePanelProps = {
@@ -89,18 +89,21 @@ export function SidePanel({
     if (!isFormValid()) return;
 
     try {
-      // Mock 데이터를 사용하여 주문 생성
+      // 새로운 백엔드 명세에 맞게 주문 생성
       const orderData: OrderRequest = {
-        customerInfo,
-        items,
-        totalAmount: total,
-        orderStatus: "COMPLETED",
+        email: customerInfo.email,
+        address: `${customerInfo.address} ${customerInfo.detailAddress}`,
+        zipCode: parseInt(customerInfo.zipCode),
+        items: items.map((item) => ({
+          productId: parseInt(item.productId),
+          quantity: item.qty,
+        })),
       };
 
       const response = await createOrder(orderData);
 
-      if (!response.success) {
-        throw new Error("주문 생성에 실패했습니다.");
+      if (response.resultCode !== "201-1") {
+        throw new Error(response.msg || "주문 생성에 실패했습니다.");
       }
 
       // 주문 성공 시 완료 화면 표시
