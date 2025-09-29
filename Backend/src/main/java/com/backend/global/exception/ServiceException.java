@@ -2,20 +2,14 @@ package com.backend.global.exception;
 
 public class ServiceException extends RuntimeException {
 
-    private final String resultCode;
-    private final String msg;
+    private final ErrorCode errorCode;
 
-    public ServiceException(String resultCode, String msg) {
-        super("%s : %s".formatted(resultCode, msg));
-        this.resultCode = resultCode;
-        this.msg = msg;
+    public ServiceException(ErrorCode errorCode) {
+        super("%d : %s".formatted(errorCode.getCode(), errorCode.getMessage()));
+        this.errorCode = errorCode;
     }
 
-    public String getResultCode() {
-        return resultCode;
-    }
-
-    public String getMsg() {
-        return msg;
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }

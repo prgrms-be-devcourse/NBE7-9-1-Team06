@@ -4,6 +4,7 @@ import com.backend.domain.product.dto.ProductDetailResponseDto;
 import com.backend.domain.product.dto.ProductResponseDto;
 import com.backend.domain.product.entity.Product;
 import com.backend.domain.product.repository.ProductRepository;
+import com.backend.global.exception.ErrorCode;
 import com.backend.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class ProductService {
     // 상품 상세 조회
     public ProductDetailResponseDto getProductById(Integer id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ServiceException("PRODUCT-404","상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
         return ProductDetailResponseDto.fromEntity(product);
     }
 }
