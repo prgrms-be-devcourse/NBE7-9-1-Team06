@@ -21,7 +21,7 @@ public class AdminAuthService {
 
     public void checkPassword(String inputPassword, String rawPassword) {
         if(!passwordEncoder.matches(inputPassword, rawPassword)) {
-            throw new ServiceException(ErrorCode.PASSWORD_NOT_MATCH);
+            throw new ServiceException(ErrorCode.ADMIN_INVALID_PASSWORD);
         }
     }
 
@@ -29,7 +29,7 @@ public class AdminAuthService {
 
         adminAuthRepository.findByUsername(username)
                 .ifPresent(m -> {
-                    throw new ServiceException(ErrorCode.ALREADY_USED_USERNAME);
+                    throw new ServiceException(ErrorCode.ADMIN_USERNAME_DUPLICATED);
                 });
 
         Admin member = new Admin(username, passwordEncoder.encode(password));
