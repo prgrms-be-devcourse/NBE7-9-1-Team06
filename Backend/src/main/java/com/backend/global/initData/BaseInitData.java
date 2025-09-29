@@ -1,5 +1,7 @@
 package com.backend.global.initData;
 
+import com.backend.domain.admin.auth.entity.Admin;
+import com.backend.domain.admin.auth.service.AdminAuthService;
 import com.backend.domain.order.service.OrdersService;
 import com.backend.domain.product.entity.Product;
 import com.backend.domain.product.repository.ProductRepository;
@@ -22,6 +24,7 @@ public class BaseInitData {
     private BaseInitData self;
     private final ProductRepository productRepository;
     private final OrdersService ordersService;
+    private final AdminAuthService adminAuthService;
 
 
     @Bean
@@ -29,12 +32,23 @@ public class BaseInitData {
         return args -> {
             self.work1();
             self.work2();
-
+            self.work3();
         };
     }
 
     @Transactional
     public void work1() {
+
+        if(adminAuthService.count() > 0) {
+            return;
+        }
+
+        Admin admin = adminAuthService.join("admin", "1234");
+
+    }
+
+    @Transactional
+    public void work2() {
 
         if(productRepository.count() > 0) {
             return;
@@ -63,7 +77,7 @@ public class BaseInitData {
     }
 
     @Transactional
-    public void work2() {
+    public void work3() {
         if(ordersService.count() > 0) {
             return;
         }

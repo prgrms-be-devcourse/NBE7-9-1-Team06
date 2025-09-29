@@ -1,0 +1,21 @@
+2025-09-25 17:19:29.675504+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ORDERS"; SQL statement:
+ORDERS [42000-232]
+2025-09-25 17:19:34.897562+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ORDERS PRODUCT"; SQL statement:
+ORDERS PRODUCT [42000-232]
+2025-09-25 17:19:47.891071+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ORDERS"; SQL statement:
+ORDERS [42000-232]
+2025-09-25 17:19:49.578824+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ADMIN"; expected "ALTER, ANALYZE"; SQL statement:
+ADMIN [42001-232]
+2025-09-25 17:20:01.839570+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ID ID"; expected "INSERT"; SQL statement:
+ID ID [42001-232]
+2025-09-25 17:20:02.319152+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ID ID"; expected "INSERT"; SQL statement:
+ID ID [42001-232]
+2025-09-26 11:29:44.861362+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]ORDERS"; SQL statement:
+ORDERS [42000-232]
