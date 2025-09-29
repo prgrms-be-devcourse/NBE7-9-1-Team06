@@ -46,11 +46,6 @@ public class AdminProductService {
             product.setDescription(request.getDescription());
             product.setImageUrl(request.getImageUrl());
 
-            // 품절 처리: 수량이 0인 경우
-            if (product.getQuantity() == 0) {
-                throw new ServiceException(ErrorCode.PRODUCT_OUT_OF_STOCK);
-            }
-
             return AdminProductResponseDto.fromEntity(productRepository.save(product));
         } catch (ServiceException e) {
             throw e;
