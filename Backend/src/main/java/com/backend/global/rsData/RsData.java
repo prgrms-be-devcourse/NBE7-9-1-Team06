@@ -1,24 +1,5 @@
 package com.backend.global.rsData;
 
-<<<<<<< HEAD
-import lombok.Getter;
-
-@Getter
-public class RsData<T> {
-    private final String resultCode;
-    private final String msg;
-    private final T data;
-
-    public RsData(String resultCode, String msg) {
-        this(resultCode, msg, null);
-    }
-
-    public RsData(String resultCode, String msg, T data) {
-        this.resultCode = resultCode;
-        this.msg = msg;
-        this.data = data;
-    }
-=======
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,5 +24,4 @@ public class RsData<T> {
         return Integer.parseInt(statusCode);
     }
 
->>>>>>> 3b619eb (feat : 주문 취소 구현, RsData 생성)
 }
