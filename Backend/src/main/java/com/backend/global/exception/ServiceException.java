@@ -1,5 +1,7 @@
 package com.backend.global.exception;
 
+import com.backend.global.rsData.RsData;
+
 public class ServiceException extends RuntimeException {
 
     private final String resultCode;
@@ -17,5 +19,9 @@ public class ServiceException extends RuntimeException {
 
     public String getMsg() {
         return msg;
+    }
+
+    public RsData getRsData() {
+        return new RsData(resultCode, msg);
     }
 }
