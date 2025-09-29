@@ -1,37 +1,29 @@
-<html lang="ko" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="|글 상세|"></title>
+    <meta charset="UTF-8">
+    <title>제품 상세</title>
 </head>
-<th:block layout:fragment="content">
-    <h1>제품 상세</h1>
+<body>
+<h1>제품 상세</h1>
 
-    <h2>번호 :
-        <th:block th:text="${post.id}">번호</th:block>
-    </h2>
-    <h2>제품 이름 :
-        <th:block th:text="${post.product_name}">상품명</th:block>
-    </h2>
-    <h2>제품 가격 :
-        <th:block th:text="${post.product_price}">가격</th:block>
-    </h2>
-    <h2>제품 재고 :
-        <th:block th:text="${post.quantity}">재고</th:block>
-    </h2>
-    <h2>제품 설명 :
-        <th:block th:text="${post.description}">설명</th:block>
-    </h2>
-    <h3>내용</h3>
-    <div th:text="${post.image_url}">사진</div>
-    <div>
-        <a th:href="@{/admin/products}">목록</a>
-        <a th:href="@{/admin/products/{id}/modify(id=${post.id})}">수정</a>
-        <a method="DELETE" th:href="@{/admin/products/{id}(id=${post.id})}">삭제</a>
-    </div>
-    <hr>
-    <script>
+<p>번호: <span th:text="${post.id}"></span></p>
+<p>제품 이름: <span th:text="${post.product_name}"></span></p>
+<p>제품 가격: <span th:text="${post.product_price}"></span></p>
+<p>재고: <span th:text="${post.quantity}"></span></p>
+<p>설명: <span th:text="${post.description}"></span></p>
+<p>이미지: <span th:text="${post.image_url}"></span></p>
 
-    </script>
-    <hr>
+<!-- 목록으로 돌아가기 -->
+<a th:href="@{/admin/products}">목록</a>
 
-</th:block>
+<!-- 수정 페이지로 이동 -->
+<a th:href="@{/admin/products/{id}/modify(id=${post.id})}">수정</a>
+
+<!-- 삭제 form -->
+<form th:action="@{/admin/products/{id}(id=${post.id})}" method="post" style="display:inline;">
+    <input type="hidden" name="_method" value="delete">
+    <button type="submit">삭제</button>
+</form>
+</body>
 </html>

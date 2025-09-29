@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>제품 목록</title>
 </head>
 <body>
 <h1>제품 목록</h1>
+
 <ul>
     <li th:each="post : ${posts}">
+        <!-- 상세 페이지로 이동 -->
         <a th:href="@{/admin/products/{id}(id=${post.id})}" th:text="${post.product_name}"></a>
+
+        <!-- 수정 페이지로 이동 -->
+        <a th:href="@{/admin/products/{id}(id=${post.id})}">수정</a>
+
+        <!-- 삭제 form -->
+        <form th:action="@{/admin/products/{id}(id=${post.id})}" method="post" style="display:inline;">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit">삭제</button>
+        </form>
     </li>
 </ul>
+
+<!-- 새 제품 작성 페이지로 이동 -->
+<a th:href="@{/admin/products/write}">상품 추가</a>
 </body>
 </html>
