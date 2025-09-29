@@ -5,6 +5,7 @@ import com.backend.domain.admin.auth.dto.LoginResponse;
 import com.backend.domain.admin.auth.entity.Admin;
 import com.backend.domain.admin.auth.service.AdminAuthService;
 import com.backend.domain.admin.auth.service.AuthTokenService;
+import com.backend.global.exception.ErrorCode;
 import com.backend.global.exception.ServiceException;
 import com.backend.global.rq.Rq;
 import com.backend.global.rsData.RsData;
@@ -26,7 +27,7 @@ public class AdminAuthController {
     ) {
 
         Admin admin = adminAuthService.findByUsername(loginReqBody.username())
-                .orElseThrow(() -> new ServiceException("401-1", "존재하지 않는 아이디입니다.")
+                .orElseThrow(() -> new ServiceException(ErrorCode.ADMIN_NOT_FOUND)
         );
 
         adminAuthService.checkPassword(loginReqBody.password(), admin.getPassword());

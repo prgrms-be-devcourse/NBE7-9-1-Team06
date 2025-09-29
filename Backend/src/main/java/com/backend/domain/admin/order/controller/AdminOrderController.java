@@ -88,9 +88,10 @@ public class AdminOrderController {
     public RsData<Object> deleteOrder(
             @PathVariable int orderId
     ) {
-
-        Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+        Orders orders = ordersService.findById(orderId);
+        if (orders == null) {
+            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND);
+        }
 
         adminOrdersService.adminDeleteOrder(orders);
 

@@ -1,9 +1,11 @@
 package com.backend.global.security;
 
+import com.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,28 +47,30 @@ public class SecurityConfig {
                 .exceptionHandling(
                         exceptionHandling -> exceptionHandling
                                 .authenticationEntryPoint((request, response, authenticationException) -> {
-                                    response.setContentType("application/json");
-                                    response.setStatus(401);
+                                    ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_FOUND;
+                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                    response.setStatus(errorCode.getStatus().value());
                                     response.getWriter().write(
                                             """
-                                                        {
-                                                            \"resultCode\": \"401-1\",
-                                                            \"msg\": \"로그인 후 이용해주세요.\"
-                                                        }
-                                                    """);
+                                                {
+                                                    \"resultCode\": \"%d\",
+                                                    \"msg\": \"%s\"
+                                                }
+                                            """.formatted(errorCode.getCode(), errorCode.getMessage()));
                                 })
                                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                            response.setContentType("application/json");
-                                            response.setStatus(403);
-                                            response.getWriter().write(
-                                                    """
-                                                                {
-                                                                    \"resultCode\": \"403-1\",
-                                                                    \"msg\": \"권한이 없습니다.\"
-                                                                }
-                                                            """);
-                                        }
-                                ));
+                                    ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_INVALID;
+                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                    response.setStatus(errorCode.getStatus().value());
+                                    response.getWriter().write(
+                                            """
+                                                {
+                                                    \"resultCode\": \"%d\",
+                                                    \"msg\": \"%s\"
+                                                }
+                                            """.formatted(errorCode.getCode(), errorCode.getMessage()));
+                                })
+                );
 
         return http.build();
     }

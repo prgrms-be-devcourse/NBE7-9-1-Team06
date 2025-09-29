@@ -55,7 +55,7 @@ public class AdminOrdersService {
         List<Orders> ordersList = ordersRepository.findByEmailOrderByOrderDateDesc(email);
 
         if (ordersList.isEmpty()) {
-            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND, "해당 이메일로 주문된 내역이 없습니다: " + email);
+            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND);
         }
 
         return getAdminOrdersListResBody(ordersList);
@@ -83,9 +83,10 @@ public class AdminOrdersService {
 
     // 주문 상세 조회
     public AdminOrdersDetailResBody getAdminOrderDetail(int orderId) {
-        Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
-
+        Orders orders = ordersService.findById(orderId);
+        if (orders == null) {
+            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND);
+        }
 
         boolean canModify = ordersService.canModifyOrder(orders);
 
@@ -97,6 +98,7 @@ public class AdminOrdersService {
 
         return new AdminOrdersDetailResBody(OrdersDto, orderDetails);
     }
+
 
 
     // 주문 삭제 (취소)
@@ -115,7 +117,6 @@ public class AdminOrdersService {
 
     // 주문 수정
     public AdminOrdersUpdateResBody adminUpdateOrder(int orderId, AdminOrdersUpdateReqBody reqBody) {
-
         Orders orders = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 
@@ -163,10 +164,10 @@ public class AdminOrdersService {
                     .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
 
             if (quantity <= 0) {
-                throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE, "수량은 1 이상이어야 합니다: " + product.getProductName());
+                throw new ServiceException(ErrorCode.ORDER_INVALID_QUANTITY);
             }
             if (product.getQuantity() < quantity) {
-                throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE, "재고가 부족합니다: " + product.getProductName());
+                throw new ServiceException(ErrorCode.ORDER_PRODUCT_STOCK_SHORTAGE);
             }
 
             OrdersDetail newDetail = new OrdersDetail();
@@ -208,7 +209,7 @@ public class AdminOrdersService {
         List<Orders> ordersList = ordersRepository.findMergeableOrders(email, mergeableStatuses, start, end);
 
         if (ordersList.isEmpty()) {
-            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND, "합배송 처리 가능한 주문이 없습니다.");
+            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND);
         }
 
         return getAdminOrdersListResBody(ordersList);
