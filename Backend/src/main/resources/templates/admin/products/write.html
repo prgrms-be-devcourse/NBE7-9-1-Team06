@@ -1,16 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><title>상품 등록</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
 <body>
-<h1>상품 등록</h1>
-<form th:action="@{/products}" th:object="${product}" method="post">
-    <p>상품 코드: <input type="number" th:field="*{product_id}"/></p>
-    <p>상품명: <input type="text" th:field="*{product_name}"/></p>
-    <p>가격: <input type="number" th:field="*{product_price}"/></p>
-    <p>수량: <input type="number" th:field="*{quantity}"/></p>
-    <p>이미지 URL: <input type="text" th:field="*{image_url}"/></p>
-    <p>설명: <textarea th:field="*{description}"></textarea></p>
-    <button type="submit">등록</button>
+<ul style="color:red">
+</ul>
+
+<form method="POST" action="/admin/items/write">
+    <label>상품명</label>
+    <br>
+    <input type="text" name="name">
+    <br>
+    <label>가격</label>
+    <br>
+    <input type="text" name="가격">
+    <br>
+    <label>재고량</label>
+    <br>
+    <input type="text" name="재고">
+    <br>
+    <label>이미지 주소</label>
+    <br>
+    <input type="text" name="이미지">
+    <br>
+    <label>상세 설명</label>
+    <br>
+    <textarea name="description"></textarea>
+    <br>
+    <input type="submit" value="작성">
 </form>
+
+<script>
+    const li = document.querySelector("ul li");
+    const errorFieldName = li.dataset.errorFieldName;
+
+    if(errorFieldName.length > 0) { const form = document.querySelector("form");
+        form[errorFieldName].focus();
+    }
+</script>
 </body>
 </html>
