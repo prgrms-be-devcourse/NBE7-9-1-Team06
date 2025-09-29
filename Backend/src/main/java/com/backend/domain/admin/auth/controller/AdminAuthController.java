@@ -28,7 +28,7 @@ public class AdminAuthController {
 
         Admin admin = adminAuthService.findByUsername(loginReqBody.username())
                 .orElseThrow(() -> new ServiceException(ErrorCode.ADMIN_NOT_FOUND)
-        );
+                );
 
         adminAuthService.checkPassword(loginReqBody.password(), admin.getPassword());
         String accessToken = authTokenService.genAccessToken(admin);

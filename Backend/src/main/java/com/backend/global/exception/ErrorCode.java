@@ -7,7 +7,12 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // Product 도메인_1000번대
+    PRODUCT_LIST_EMPTY(1000, HttpStatus.NOT_FOUND, "등록된 상품이 없습니다."),
     PRODUCT_NOT_FOUND(1001, HttpStatus.NOT_FOUND, "상품이 존재하지 않습니다."),
+    PRODUCT_CREATE_FAILED(1100, HttpStatus.BAD_REQUEST, "상품 생성에 실패했습니다."),
+    PRODUCT_UPDATE_FAILED(1101, HttpStatus.BAD_REQUEST, "상품 수정에 실패했습니다."),
+    PRODUCT_OUT_OF_STOCK(1102, HttpStatus.BAD_REQUEST, "상품이 품절 상태입니다."),
+    PRODUCT_DELETE_FAILED(1200, HttpStatus.BAD_REQUEST, "상품 삭제에 실패했습니다."),
 
     // Order 도메인_2000번대
     ORDER_NOT_FOUND(2001, HttpStatus.NOT_FOUND, "주문이 존재하지 않습니다."),
