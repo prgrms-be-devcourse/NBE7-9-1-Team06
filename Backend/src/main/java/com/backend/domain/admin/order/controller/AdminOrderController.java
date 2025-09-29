@@ -3,6 +3,7 @@ package com.backend.domain.admin.order.controller;
 import com.backend.domain.admin.order.dto.AdminOrdersDetailResBody;
 import com.backend.domain.admin.order.dto.AdminOrdersListResBody;
 import com.backend.domain.admin.order.dto.AdminOrdersUpdateReqBody;
+import com.backend.domain.admin.order.dto.AdminOrdersUpdateResBody;
 import com.backend.domain.admin.order.service.AdminOrdersService;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
@@ -69,12 +70,17 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{orderId}")
-    public RsData<Void> updateOrder(
+    public RsData<AdminOrdersUpdateResBody> updateOrder(
             @PathVariable int orderId,
             @RequestBody AdminOrdersUpdateReqBody reqBody
     ) {
-        adminOrdersService.adminUpdateOrder(orderId, reqBody);
-        return new RsData<>("200-1", "관리자 - %d번 주문이 수정되었습니다.".formatted(orderId));
+        AdminOrdersUpdateResBody resBody = adminOrdersService.adminUpdateOrder(orderId, reqBody);
+
+
+        return new RsData<>(
+                "200-1",
+                "관리자 - %d번 주문이 수정되었습니다.".formatted(orderId),
+                resBody);
     }
 
 //    // 합배송 처리

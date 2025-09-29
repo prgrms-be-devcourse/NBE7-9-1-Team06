@@ -3,6 +3,7 @@ package com.backend.domain.admin.order.service;
 import com.backend.domain.admin.order.dto.AdminOrdersDetailResBody;
 import com.backend.domain.admin.order.dto.AdminOrdersListResBody;
 import com.backend.domain.admin.order.dto.AdminOrdersUpdateReqBody;
+import com.backend.domain.admin.order.dto.AdminOrdersUpdateResBody;
 import com.backend.domain.order.dto.OrdersDetailDto;
 import com.backend.domain.order.dto.OrdersDto;
 import com.backend.domain.order.entity.OrderStatus;
@@ -90,7 +91,7 @@ public class AdminOrdersService {
 
 
     // 주문 수정
-    public void adminUpdateOrder(int orderId, AdminOrdersUpdateReqBody reqBody) {
+    public AdminOrdersUpdateResBody adminUpdateOrder(int orderId, AdminOrdersUpdateReqBody reqBody) {
 
         Orders orders = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
@@ -104,6 +105,11 @@ public class AdminOrdersService {
         updateOrderInfo(orders, reqBody.address(), reqBody.zipCode(), newTotalPrice);
 
         ordersRepository.save(orders);
+
+        return new AdminOrdersUpdateResBody(
+                new OrdersDto(orders, ordersService.canModifyOrder(orders.getOrderDate())),
+                orders.getOrderDetails().stream().map(OrdersDetailDto::new).collect(Collectors.toList())
+        );
     }
 
     // 기존 재고 원복
