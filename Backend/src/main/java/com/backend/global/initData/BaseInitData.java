@@ -3,7 +3,6 @@ package com.backend.global.initData;
 import com.backend.domain.order.service.OrdersService;
 import com.backend.domain.product.entity.Product;
 import com.backend.domain.product.repository.ProductRepository;
-import com.backend.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -21,10 +20,9 @@ public class BaseInitData {
     @Autowired
     @Lazy
     private BaseInitData self;
-    private final ProductService productService;
-    private final OrdersService ordersService; // This is the instance
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+    private final OrdersService ordersService;
+
 
     @Bean
     ApplicationRunner initDataRunner() {
@@ -38,41 +36,30 @@ public class BaseInitData {
     @Transactional
     public void work1() {
 
-        if(productService.count() > 0) {
+        if(productRepository.count() > 0) {
             return;
         }
 
-        Product product1 = productService.addProduct(
-                "Colombia Narino",
-                5000,
-                20,
+        productRepository.save(make(
+                "Colombia Narino", 5000, 20,
                 "콜롬비아 나리노 원두",
                 "https://example.com/images/colombia-narino.jpg"
-        );
-
-        Product product2 = productService.addProduct(
-                "Brazil Serra Do Caparaó",
-                6000,
-                20,
+        ));
+        productRepository.save(make(
+                "Brazil Serra Do Caparaó", 6000, 20,
                 "브라질 세하도 카파라오 원두",
                 "https://example.com/images/brazil-serra.jpg"
-        );
-
-        Product product3 = productService.addProduct(
-                "Colombia Quindio (White Wine Extended)",
-                7000,
-                20,
+        ));
+        productRepository.save(make(
+                "Colombia Quindio (White Wine Extended)", 7000, 20,
                 "콜롬비아 퀸디오 원두",
                 "https://example.com/images/colombia-quindio.jpg"
-        );
-
-        Product product4 = productService.addProduct(
-                "Ethiopia Sidamo",
-                8000,
-                20,
+        ));
+        productRepository.save(make(
+                "Ethiopia Sidamo", 8000, 20,
                 "에티오피아 시다모 원두",
                 "https://example.com/images/ethiopia-sidamo.jpg"
-        );
+        ));
     }
 
     @Transactional
@@ -92,8 +79,8 @@ public class BaseInitData {
                 "서울시 강남구",
                 12345,
                 List.of(
-                        new OrdersService.OrderItem(p1.getId(), 2),
-                        new OrdersService.OrderItem(p2.getId(), 1)
+                        new OrdersService.OrderItem(p1.getProductId(), 2),
+                        new OrdersService.OrderItem(p2.getProductId(), 1)
                 )
         );
 
@@ -102,7 +89,7 @@ public class BaseInitData {
                 "서울시 종로구",
                 54321,
                 List.of(
-                        new OrdersService.OrderItem(p1.getId(), 1)
+                        new OrdersService.OrderItem(p1.getProductId(), 1)
                 )
         );
 
@@ -111,9 +98,19 @@ public class BaseInitData {
                 "서울시 마포구",
                 11223,
                 List.of(
-                        new OrdersService.OrderItem(p2.getId(), 2)
+                        new OrdersService.OrderItem(p2.getProductId(), 2)
                 )
         );
 
+    }
+
+    private Product make(String name, Integer price, Integer qty, String desc, String imageUrl) {
+        Product p = new Product();
+        p.setProductName(name);
+        p.setProductPrice(price);
+        p.setQuantity(qty);
+        p.setDescription(desc);
+        p.setImageUrl(imageUrl);
+        return p;
     }
 }

@@ -1,5 +1,4 @@
 spring:
-<<<<<<< HEAD
   application:
     name: Backend
 
@@ -15,15 +14,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-=======
-  jpa:
-    hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true   # ← JPA 테이블 생성 후 data.sql 실행
+
   sql:
     init:
       mode: always
+
   h2:
     console:
       enabled: true
->>>>>>> 5b6af16 (feat: 주문 생성 구현)

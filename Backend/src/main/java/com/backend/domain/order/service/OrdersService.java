@@ -117,7 +117,7 @@ public class OrdersService {
         }
 
         Map<Integer, OrdersDetail> current = order.getOrderDetails().stream()
-                .collect(Collectors.toMap(d -> d.getProduct().getId(), d -> d));
+                .collect(Collectors.toMap(d -> d.getProduct().getProductId(), d -> d));
 
         int totalPrice = 0;
 
