@@ -73,6 +73,7 @@ export async function createOrder(
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(orderData),
     });
 
@@ -95,7 +96,9 @@ export async function getOrderHistoryByEmail(
   try {
     const url = `/api/v1/orders?email=${encodeURIComponent(email)}`;
     console.log("API 호출 URL:", url);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      credentials: "include",
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -156,7 +159,9 @@ export async function updateOrder(
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
       },
+      credentials: "include",
       body: JSON.stringify(updateData),
     });
 

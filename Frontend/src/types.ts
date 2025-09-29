@@ -172,7 +172,7 @@ export function transformBackendOrderToFrontend(
     items: backendOrder.orderDetails.map((detail) => ({
       productId: detail.productId.toString(),
       name: detail.productName,
-      unitPrice: detail.price,
+      unitPrice: detail.price / detail.quantity, // 총가격을 수량으로 나누어 단가 계산
       quantity: detail.quantity,
     })),
   };
@@ -191,7 +191,7 @@ export function transformBackendOrderDetailToFrontend(
     items: backendOrderDetail.orderDetails.map((detail) => ({
       productId: detail.productId.toString(),
       name: detail.productName,
-      unitPrice: detail.price,
+      unitPrice: detail.price / detail.quantity, // 총가격을 수량으로 나누어 단가 계산
       quantity: detail.quantity,
     })),
   };

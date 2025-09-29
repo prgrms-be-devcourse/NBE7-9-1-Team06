@@ -675,7 +675,6 @@ export function OrderHistoryPanel({ open, onClose }: OrderHistoryPanelProps) {
                       const response = await updateOrder(
                         editingOrderData.orderId,
                         {
-                          email: editingOrderData.email,
                           address: "주소 정보 없음", // 백엔드에서 주소 정보를 제공하지 않으므로 기본값 사용
                           zipCode: 12345, // 기본 우편번호
                           items: editingOrderData.items.map((item) => ({

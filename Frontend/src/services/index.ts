@@ -44,10 +44,15 @@ export async function createOrder(
   orderData: OrderRequest
 ): Promise<OrderResponse> {
   try {
-    return await apiService.createOrder(orderData);
+    console.log("🔄 API 호출 시도:", orderData);
+    const result = await apiService.createOrder(orderData);
+    console.log("✅ API 호출 성공:", result);
+    return result;
   } catch (error) {
-    console.warn("API 실패, Mock 데이터 사용:", error);
-    return await mockService.createOrderMock(orderData);
+    console.error("❌ API 실패, Mock 데이터 사용:", error);
+    const mockResult = await mockService.createOrderMock(orderData);
+    console.log("🔄 Mock 결과:", mockResult);
+    return mockResult;
   }
 }
 
@@ -81,10 +86,15 @@ export async function updateOrder(
   updateData: Partial<OrderUpdateRequest>
 ): Promise<OrderUpdateResponse> {
   try {
-    return await apiService.updateOrder(orderId, updateData);
+    console.log("🔄 주문 수정 API 호출 시도:", { orderId, updateData });
+    const result = await apiService.updateOrder(orderId, updateData);
+    console.log("✅ 주문 수정 API 호출 성공:", result);
+    return result;
   } catch (error) {
-    console.warn("API 실패, Mock 데이터 사용:", error);
-    return await mockService.updateOrderMock(orderId, updateData);
+    console.error("❌ 주문 수정 API 실패, Mock 데이터 사용:", error);
+    const mockResult = await mockService.updateOrderMock(orderId, updateData);
+    console.log("🔄 주문 수정 Mock 결과:", mockResult);
+    return mockResult;
   }
 }
 

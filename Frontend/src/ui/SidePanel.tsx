@@ -100,15 +100,37 @@ export function SidePanel({
 
     try {
       // 새로운 백엔드 명세에 맞게 주문 생성
+      const addressParts = [
+        customerInfo.address?.trim(),
+        customerInfo.detailAddress?.trim(),
+      ].filter((part) => part && part.length > 0);
+
+      const fullAddress =
+        addressParts.length > 0 ? addressParts.join(" ") : "주소 정보 없음";
+
       const orderData: OrderRequest = {
         email: customerInfo.email,
-        address: `${customerInfo.address} ${customerInfo.detailAddress}`,
+        address: fullAddress,
         zipCode: parseInt(customerInfo.zipCode),
         items: items.map((item) => ({
           productId: parseInt(item.productId),
           quantity: item.qty,
         })),
       };
+
+      console.log("🔄 주소 처리 과정:", {
+        originalAddress: customerInfo.address,
+        originalDetailAddress: customerInfo.detailAddress,
+        addressParts: addressParts,
+        finalAddress: fullAddress,
+      });
+
+      console.log("🔄 주문 생성 데이터:", {
+        email: orderData.email,
+        address: orderData.address,
+        zipCode: orderData.zipCode,
+        items: orderData.items,
+      });
 
       const response = await createOrder(orderData);
 
