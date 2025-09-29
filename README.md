@@ -32,7 +32,11 @@ SpringBoot 기반의 온라인 원두 메뉴 관리 및 주문 시스템입니�
       <td align="center"> [사용자] <br>주문 생성<br>주문 목록 및 상세 조회<br>주문 수정<br>주문 삭제 <br> 주문 상태 스케줄링 </td>
       <td align="center">[관리자] <br> SpringSecurity/JWT <br>
 관리자 로그인 <br> 주문 조회 <br> 주문 취소 <br> 합배송 처리 </td>
-      <td align="center">[사용자]<br> 상품 목록 및 상세 조회</td>
+      <td align="center">
+          [사용자]<br> 상품 목록 및 상세 조회
+          <br>
+          [관리자]<br>상품 등록 <br> 상품 수정 <br> 상품 삭제 
+      </td>
       <td align="center">[관리자]<br>상품 등록 <br> 상품 수정 <br> 상품 삭제 </td>
     </tr>
   </tbody>
