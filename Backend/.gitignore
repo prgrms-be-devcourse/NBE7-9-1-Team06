@@ -19,12 +19,17 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/
+/build/
+/target/
 *.iws
 *.iml
 *.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/resources/data.sql
+.idea/workspace.xml
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,8 +41,7 @@ out/
 ### VS Code ###
 .vscode/
 
-###custom###
+### macOs ###
 .DS_Store
-.idea
-.db_dev.mv.db
-.db_dev.trace.db
+Backend/.DS_Store
+
