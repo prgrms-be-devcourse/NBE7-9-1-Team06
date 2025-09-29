@@ -6,7 +6,7 @@
 
 ## 📓 프로젝트 개요 
 
-SpringBoot 기반의 온라인 원두 메뉴 관리 및 주문 시스템입니다. 
+Grids & Circles는 SpringBoot 기반의 온라인 원두 메뉴 관리 및 주문 시스템입니다. 
 사용자는 이메일을 통해 주문을 생성·조회·수정·취소할 수 있고, 관리자는 상품을 관리하며 전날 오후 2시부터 당일 오후 2시까지의 주문을 모아 배송 처리합니다.
 
 ---
@@ -119,11 +119,11 @@ frontend/
 ```
 
 ---
-## ERD
+## 🗄️ ERD
 <img width="900" height="700" alt="ERD" src="https://github.com/user-attachments/assets/0da3ea05-bc2d-4966-98bc-5c7ae92f4104" />
 
 ---
-## 시스템 아키텍처 
+## ⚙️ 시스템 아키텍처 
 <img width="600" height="400" alt="시스템구성도" src="https://github.com/user-attachments/assets/f018816a-d94c-45ac-a269-83c9f9a44b8f" />
 
 ---
