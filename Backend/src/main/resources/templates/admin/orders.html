@@ -30,6 +30,39 @@
           <p>주문 목록을 조회하고 주문을 취소할 수 있습니다.</p>
         </div>
 
+        <!-- 검색 및 필터 -->
+        <div class="search-container">
+          <div class="search-row">
+            <div class="search-group">
+              <label for="emailSearch">이메일 검색</label>
+              <input
+                type="email"
+                id="emailSearch"
+                placeholder="주문자 이메일을 입력하세요"
+              />
+              <button class="btn btn-primary" onclick="searchByEmail()">
+                검색
+              </button>
+            </div>
+            <div class="search-group">
+              <label for="orderIdSearch">주문 ID 검색</label>
+              <input
+                type="text"
+                id="orderIdSearch"
+                placeholder="주문 ID를 입력하세요"
+              />
+              <button class="btn btn-primary" onclick="searchByOrderId()">
+                검색
+              </button>
+            </div>
+            <div class="search-group">
+              <button class="btn btn-secondary" onclick="clearSearch()">
+                전체 목록
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- 로딩 인디케이터 -->
         <div
           id="loadingIndicator"
@@ -102,6 +135,89 @@
       </div>
     </main>
 
+    <!-- 주문 상세 모달 -->
+    <div id="orderDetailModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="orderDetailTitle">주문 상세 정보</h2>
+          <button class="modal-close" onclick="closeOrderDetail()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="orderDetailBody">
+          <!-- 주문 상세 정보가 여기에 동적으로 삽입됩니다 -->
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeOrderDetail()"
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주문 수정 모달 -->
+    <div id="orderUpdateModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="orderUpdateTitle">주문 수정</h2>
+          <button class="modal-close" onclick="closeOrderUpdate()">
+            &times;
+          </button>
+        </div>
+        <form id="orderUpdateForm" class="modal-body">
+          <input type="hidden" id="updateOrderId" name="orderId" />
+
+          <div class="form-group">
+            <label for="updateOrderAddress">주소</label>
+            <input
+              type="text"
+              id="updateOrderAddress"
+              name="address"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="updateOrderZipCode">우편번호</label>
+            <input
+              type="number"
+              id="updateOrderZipCode"
+              name="zipCode"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>주문 상품</label>
+            <div id="orderItemsList" class="order-items-list">
+              <!-- 주문 상품 목록이 여기에 동적으로 삽입됩니다 -->
+            </div>
+          </div>
+
+          <div
+            id="orderUpdateErrorMessage"
+            class="error-message"
+            style="display: none"
+          ></div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeOrderUpdate()"
+            >
+              취소
+            </button>
+            <button type="submit" class="btn btn-primary">수정</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/ui.js}"></script>
     <script th:src="@{/js/orders.js}"></script>
@@ -113,6 +229,12 @@
 
         // 주문 목록 로드
         loadOrders();
+
+        // 주문 수정 폼 이벤트 리스너
+        const orderUpdateForm = document.getElementById("orderUpdateForm");
+        if (orderUpdateForm) {
+          orderUpdateForm.addEventListener("submit", handleOrderUpdate);
+        }
       });
     </script>
   </body>

@@ -26,10 +26,19 @@ async function loadProducts() {
     console.log("API 응답:", result); // 디버깅용
 
     // RsData 구조에서 실제 데이터 추출
-    if (result.resultCode === "200-1" && result.data && result.data.products) {
+    const isSuccess =
+      result.resultCode === "200-1" ||
+      result.resultCode === "200" ||
+      result.resultCode === 200 ||
+      result.resultCode === "SUCCESS" ||
+      (result.resultCode && result.resultCode.toString().startsWith("200"));
+
+    if (isSuccess && result.data && result.data.products) {
       renderProducts(result.data.products);
     } else {
-      throw new Error(result.msg || "상품 목록을 불러올 수 없습니다.");
+      throw new Error(
+        result.msg || result.message || "상품 목록을 불러올 수 없습니다."
+      );
     }
   } catch (error) {
     console.error("상품 목록 로드 오류:", error);
@@ -190,7 +199,14 @@ async function fillFormWithProductData(productId) {
     console.log("API 응답:", result); // 디버깅용
 
     // RsData 구조에서 실제 데이터 추출
-    if (result.resultCode === "200-1" && result.data && result.data.products) {
+    const isSuccess =
+      result.resultCode === "200-1" ||
+      result.resultCode === "200" ||
+      result.resultCode === 200 ||
+      result.resultCode === "SUCCESS" ||
+      (result.resultCode && result.resultCode.toString().startsWith("200"));
+
+    if (isSuccess && result.data && result.data.products) {
       const products = result.data.products;
       console.log("찾는 상품 ID:", productId, "타입:", typeof productId);
       console.log(
@@ -210,7 +226,7 @@ async function fillFormWithProductData(productId) {
       document.getElementById("productName").value = product.productName || "";
       document.getElementById("productPrice").value =
         product.productPrice || "";
-      document.getElementById("productQuantity").value = product.quantity || "";
+      document.getElementById("productQuantity").value = product.quantity || 0;
       document.getElementById("productDescription").value =
         product.description || "";
       document.getElementById("productImageUrl").value = product.imageUrl || "";
@@ -247,13 +263,18 @@ async function handleProductSubmit() {
     hideFormError();
 
     // 요청 데이터 준비
+    const price = formData.get("price");
+    const quantity = formData.get("quantity");
+
     const productData = {
       productName: formData.get("name"),
-      productPrice: parseInt(formData.get("price")),
-      quantity: parseInt(formData.get("quantity")),
+      productPrice: price ? parseInt(price) : 0,
+      quantity: quantity ? parseInt(quantity) : 0,
       description: formData.get("description") || null,
       imageUrl: formData.get("imageUrl") || null,
     };
+
+    console.log("전송할 상품 데이터:", productData); // 디버깅용
 
     const isEdit = currentProductId !== null;
     const url = isEdit
@@ -278,9 +299,33 @@ async function handleProductSubmit() {
     }
 
     const result = await response.json();
-    console.log("상품 저장 응답:", result); // 디버깅용
+    console.log("=== 상품 저장 응답 상세 정보 ===");
+    console.log("전체 응답:", result);
+    console.log("응답 resultCode:", result.resultCode);
+    console.log("응답 타입:", typeof result.resultCode);
+    console.log("응답 msg:", result.msg);
+    console.log("응답 message:", result.message);
+    console.log("응답 data:", result.data);
+    console.log("HTTP 상태 코드:", response.status);
+    console.log("HTTP 상태 텍스트:", response.statusText);
 
-    if (result.resultCode === "200-1") {
+    // HTTP 상태 코드가 200번대면 성공으로 간주
+    const isHttpSuccess = response.status >= 200 && response.status < 300;
+
+    // 다양한 성공 코드 처리
+    const isResultCodeSuccess =
+      result.resultCode === "200-1" ||
+      result.resultCode === "200" ||
+      result.resultCode === 200 ||
+      result.resultCode === "SUCCESS" ||
+      result.resultCode === "SUCCESSFUL" ||
+      (result.resultCode && result.resultCode.toString().startsWith("200"));
+
+    console.log("HTTP 성공 여부:", isHttpSuccess);
+    console.log("ResultCode 성공 여부:", isResultCodeSuccess);
+
+    // HTTP가 성공하면 무조건 성공으로 처리 (실제 DB 저장이 되고 있으므로)
+    if (isHttpSuccess) {
       notify(
         isEdit
           ? "상품이 성공적으로 수정되었습니다."
@@ -288,7 +333,11 @@ async function handleProductSubmit() {
         "success"
       );
     } else {
-      throw new Error(result.msg || "상품 저장에 실패했습니다.");
+      throw new Error(
+        result.msg ||
+          result.message ||
+          `HTTP ${response.status}: 상품 저장에 실패했습니다.`
+      );
     }
 
     closeProductForm();
@@ -339,10 +388,19 @@ async function deleteProduct(productId) {
       const result = await response.json();
       console.log("상품 삭제 응답:", result); // 디버깅용
 
-      if (result.resultCode === "200-1") {
+      const isSuccess =
+        result.resultCode === "200-1" ||
+        result.resultCode === "200" ||
+        result.resultCode === 200 ||
+        result.resultCode === "SUCCESS" ||
+        (result.resultCode && result.resultCode.toString().startsWith("200"));
+
+      if (isSuccess) {
         notify("상품이 성공적으로 삭제되었습니다.", "success");
       } else {
-        throw new Error(result.msg || "상품 삭제에 실패했습니다.");
+        throw new Error(
+          result.msg || result.message || "상품 삭제에 실패했습니다."
+        );
       }
     }
 
@@ -386,12 +444,12 @@ function validateProductForm(formData) {
     }
   }
 
-  if (!productQuantity) {
+  if (!productQuantity || productQuantity.trim() === "") {
     errors.push("재고 수량을 입력해주세요.");
   } else {
     const quantityNum = parseInt(productQuantity);
-    if (isNaN(quantityNum) || quantityNum <= 0) {
-      errors.push("재고 수량은 1 이상의 숫자를 입력해주세요.");
+    if (isNaN(quantityNum) || quantityNum < 0) {
+      errors.push("재고 수량은 0 이상의 숫자를 입력해주세요.");
     }
   }
 
