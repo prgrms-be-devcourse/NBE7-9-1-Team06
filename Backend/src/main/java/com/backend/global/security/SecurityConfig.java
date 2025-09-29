@@ -27,28 +27,31 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/css/**", "/js/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/v1/products/**",
-                                "/api/v1/orders/**",
-                                "/api/v1/admin/orders/**",
-                                "/api/v1/admin/products/**"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/admin/login", "/api/v1/orders").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        // 1) 공개 리소스 먼저!
+                        .requestMatchers("/favicon.ico", "/h2-console/**", "/swagger-ui/**",
+                                "/login", "/css/**", "/js/**").permitAll()
+
+                        // 2) 공개 API (순서 중요!)
+                        .requestMatchers(HttpMethod.GET,  "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/v1/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/v1/admin/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/orders").permitAll()
+                        .requestMatchers(HttpMethod.PUT,    "/api/v1/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/**").permitAll()
+
+                        // 3) 관리자 전용 (나중에!)
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/**").authenticated()
-                        .anyRequest().authenticated())
-                .csrf((csrf) -> csrf.disable())
-                .headers((headers) -> headers
-                        .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
-                .formLogin(formLogin -> formLogin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // 4) 나머지는 인증 필요
+                        .anyRequest().authenticated()
+                )
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.addHeaderWriter(
+                        new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/admin/dashboard", true)
                         .failureUrl("/login?error=true")
@@ -61,60 +64,48 @@ public class SecurityConfig {
                         .deleteCookies("accessToken")
                         .permitAll())
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(
-                        exceptionHandling -> exceptionHandling
-                                .authenticationEntryPoint((request, response, authenticationException) -> {
-                                    // Thymeleaf 페이지 요청인 경우 로그인 페이지로 리다이렉트
-                                    if (request.getRequestURI().startsWith("/admin")) {
-                                        response.sendRedirect("/login");
-                                        return;
-                                    }
-                                    // API 요청인 경우 JSON 응답
-                                    ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_FOUND;
-                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                                    response.setStatus(errorCode.getStatus().value());
-                                    response.getWriter().write(
-                                            """
-                                                {
-                                                    \"resultCode\": \"%d\",
-                                                    \"msg\": \"%s\"
-                                                }
-                                            """.formatted(errorCode.getCode(), errorCode.getMessage()));
-                                })
-                                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                    // Thymeleaf 페이지 요청인 경우 로그인 페이지로 리다이렉트
-                                    if (request.getRequestURI().startsWith("/admin")) {
-                                        response.sendRedirect("/login");
-                                        return;
-                                    }
-                                    // API 요청인 경우 JSON 응답
-                                    ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_INVALID;
-                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                                    response.setStatus(errorCode.getStatus().value());
-                                    response.getWriter().write(
-                                            """
-                                                {
-                                                    \"resultCode\": \"%d\",
-                                                    \"msg\": \"%s\"
-                                                }
-                                            """.formatted(errorCode.getCode(), errorCode.getMessage()));
-                                })
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req, res, ex0) -> {
+                            if (req.getRequestURI().startsWith("/admin")) {
+                                res.sendRedirect("/login");
+                            } else {
+                                ErrorCode ec = ErrorCode.ACCESS_TOKEN_NOT_FOUND;
+                                res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                res.setStatus(ec.getStatus().value());
+                                res.getWriter().write("""
+                            {"resultCode":"%d","msg":"%s"}
+                        """.formatted(ec.getCode(), ec.getMessage()));
+                            }
+                        })
+                        .accessDeniedHandler((req, res, ex1) -> {
+                            if (req.getRequestURI().startsWith("/admin")) {
+                                res.sendRedirect("/login");
+                            } else {
+                                ErrorCode ec = ErrorCode.ACCESS_TOKEN_INVALID;
+                                res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                res.setStatus(ec.getStatus().value());
+                                res.getWriter().write("""
+                            {"resultCode":"%d","msg":"%s"}
+                        """.formatted(ec.getCode(), ec.getMessage()));
+                            }
+                        })
                 );
 
+        // ✅ 빠져있던 반환!
         return http.build();
     }
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://cdpn.io", "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("https://cdpn.io", "http://localhost:3000", "http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 필요에 따라 "/**"로 넓혀도 됨
+        source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
-
 }

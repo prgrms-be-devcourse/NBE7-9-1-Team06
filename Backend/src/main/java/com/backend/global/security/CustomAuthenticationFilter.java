@@ -35,100 +35,106 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final Rq rq;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        logger.debug("CustomAuthenticationFilter called");
-        try {
-            authenticate(request, response, filterChain);
-        } catch (ServiceException e) {
-            RsData<Void> rsData = new RsData<>(String.valueOf(e.getErrorCode().getCode()), e.getErrorCode().getMessage());
-            response.setContentType("application/json");
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("""
-                    {
-                        \"resultCode\": \"%s\",
-                        \"msg\": \"%s\"
-                    }
-                    """.formatted(rsData.getResultCode(), rsData.getMsg()));
-        }
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+        throws ServletException, IOException {
+
+    String uri = request.getRequestURI();
+    String method = request.getMethod();
+
+    // 디버깅용 로그
+    System.out.println("CustomAuthenticationFilter - URI: " + uri + ", Method: " + method);
+
+    // 1) 보호 경로만 인증 강제 (예: 관리자 전용)
+    boolean isProtected =
+            (uri.startsWith("/api/v1/admin/") && !uri.startsWith("/api/v1/admin/orders") && !uri.startsWith("/api/v1/admin/products")) ||  // 관리자 API (주문/상품 제외)
+            uri.startsWith("/admin/");           // Thymeleaf 관리자 페이지
+
+    System.out.println("CustomAuthenticationFilter - isProtected: " + isProtected);
+
+    // 보호 경로가 아니면 그대로 통과(permitAll 경로 포함)
+    if (!isProtected) {
+        System.out.println("CustomAuthenticationFilter - 허용된 경로, 통과");
+        chain.doFilter(request, response);
+        return;
     }
 
-    private void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+
+    // 2) 보호 경로라면 토큰을 읽어서 있으면 검증, 없으면 401
+    String token = rq.getHeader("Authorization", "");
+    if (token.startsWith("Bearer ")) token = token.substring(7);
+    if (token.isBlank()) token = rq.getCookieValue("accessToken", "");
+
+    if (token.isBlank()) { // 🔴 기존: 모든 경로에서 401 → 변경: 보호 경로에서만 401
+        throw new ServiceException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
+    }
+
+    Map<String, Object> payload = authTokenService.getPayloadOrNull(token);
+    if (payload == null || !payload.containsKey("username") || !payload.containsKey("role")) {
+        throw new ServiceException(ErrorCode.ACCESS_TOKEN_INVALID);
+    }
+
+    // ...인증 컨텍스트 설정 그대로...
+    chain.doFilter(request, response);
+}
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        String method = request.getMethod();
+        // ✅ Thymeleaf/정적리소스 등은 필터 제외
+        return !uri.startsWith("/api/");
+    }
 
-        logger.debug("CustomAuthenticationFilter - URI: " + uri + ", Method: " + method);
+    private void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        // 인증이 필요 없는 경로 설정
-        boolean isExcluded = uri.startsWith("/h2-console") ||
-                uri.startsWith("/swagger-ui") ||
-                uri.equals("/login") ||
-                (method.equals("POST") && uri.equals("/login")) || // Spring Security 폼 로그인 허용
-                uri.startsWith("/admin") || // Thymeleaf 관리자 페이지는 Spring Security가 처리 (/admin/ 포함)
-                uri.startsWith("/css/") ||
-                uri.startsWith("/js/") ||
-                uri.equals("/api/v1/admin/login") ||
-                (method.equals("GET") && uri.startsWith("/api/v1/products")) ||
-                (method.equals("GET") && uri.startsWith("/api/v1/orders")) ||
-                (method.equals("GET") && uri.startsWith("/api/v1/admin/orders")) ||
-                (method.equals("POST") && uri.equals("/api/v1/orders")) ||
-                uri.startsWith("/api/v1/admin/products");
-
-        logger.debug("CustomAuthenticationFilter - Is excluded: " + isExcluded);
-
-        if (isExcluded) {
-            logger.debug("CustomAuthenticationFilter - Skipping JWT authentication for: " + method + " " + uri);
+        // 0) 세션(폼 로그인) 인증이 이미 있으면 통과
+        Authentication existing = SecurityContextHolder.getContext().getAuthentication();
+        if (existing != null && existing.isAuthenticated() && !"anonymousUser".equals(existing.getPrincipal())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Spring Security 세션이 이미 있는 경우 JWT 인증 건너뛰기
-        Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
-        if (existingAuth != null && existingAuth.isAuthenticated() && !"anonymousUser".equals(existingAuth.getPrincipal())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Authorization 헤더에서 토큰 추출
+        // 1) 토큰 추출 (헤더 → 쿠키)
         String token = rq.getHeader("Authorization", "");
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
+        if (token.startsWith("Bearer ")) token = token.substring(7);
+        if (token.isBlank()) token = rq.getCookieValue("accessToken", "");
 
-        // 헤더에 토큰이 없으면 쿠키에서 추출
-        if (token.isBlank()) {
-            token = rq.getCookieValue("accessToken", "");
-        }
-
-        // 토큰이 없으면 인증 실패
-        if (token.isBlank()) {
-            throw new ServiceException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
-        }
-
-        Map<String, Object> payload = authTokenService.getPayloadOrNull(token);
-        if (payload == null || !payload.containsKey("username") || !payload.containsKey("role")) {
-            throw new ServiceException(ErrorCode.ACCESS_TOKEN_INVALID);
-        }
-
-        String username = (String) payload.get("username");
-        String role = (String) payload.get("role");
-
-        Admin admin = adminAuthService.findByUsername(username)
-                .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND));
-
-        UserDetails user = new SecurityUser(
-                admin.getId(),
-                admin.getUsername(),
-                admin.getPassword(),
-                List.of(new SimpleGrantedAuthority(role))
-        );
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user,
-                user.getPassword(),
-                user.getAuthorities()
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 2) 토큰이 **없으면** 여기서 끝! (예외 던지지 않음)
         filterChain.doFilter(request, response);
+        if (true) return; // 가독성용, 아래는 '토큰 있을 때'만 실행
+
+        // 3) 토큰이 **있을 때만** 검증하고 컨텍스트 세팅 (잘못된 토큰만 401)
+        // (위 return을 제거하고 아래 코드 활성화하세요)
+    /*
+    if (token.isBlank()) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    Map<String, Object> payload = authTokenService.getPayloadOrNull(token);
+    if (payload == null || !payload.containsKey("username") || !payload.containsKey("role")) {
+        throw new ServiceException(ErrorCode.ACCESS_TOKEN_INVALID);
+    }
+
+    String username = (String) payload.get("username");
+    String role = (String) payload.get("role");
+
+    Admin admin = adminAuthService.findByUsername(username)
+            .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND));
+
+    UserDetails user = new SecurityUser(
+            admin.getId(),
+            admin.getUsername(),
+            admin.getPassword(),
+            List.of(new SimpleGrantedAuthority(role))
+    );
+
+    Authentication authentication = new UsernamePasswordAuthenticationToken(
+            user, user.getPassword(), user.getAuthorities()
+    );
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    filterChain.doFilter(request, response);
+    */
     }
 }

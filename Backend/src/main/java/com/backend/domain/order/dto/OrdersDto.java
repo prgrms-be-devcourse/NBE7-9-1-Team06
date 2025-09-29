@@ -19,7 +19,7 @@ public record OrdersDto (
         this(
                 orders.getId(),
                 orders.getEmail(),
-                orders.getAddress(),
+                orders.getAddress() != null ? orders.getAddress() : "주소정보없음",
                 orders.getZipCode(),
                 orders.getTotalPrice(),
                 orders.getOrderDate(),
