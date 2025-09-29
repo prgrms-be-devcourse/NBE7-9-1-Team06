@@ -46,9 +46,11 @@ SpringBoot 기반의 온라인 원두 메뉴 관리 및 주문 시스템입니�
 ![springboot](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white)
 ![springsecurity](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![thymeleaf](https://img.shields.io/badge/thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white)
 ![mysql](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
+![h2](https://img.shields.io/badge/h2database-09476B?style=for-the-badge&logo=h2database&logoColor=white)
 ![docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
 
@@ -103,7 +105,7 @@ backend/
 │       └── util
 └── src/main/resources
 
-frontend/ (수정 필요)
+frontend/
 ├── app
 │   ├── page.tsx
 │   ├── orders
@@ -114,9 +116,12 @@ frontend/ (수정 필요)
 
 ---
 ## ERD
+<img width="900" height="700" alt="ERD" src="https://github.com/user-attachments/assets/0da3ea05-bc2d-4966-98bc-5c7ae92f4104" />
 
 ---
 ## 시스템 아키텍처 
+<img width="600" height="400" alt="시스템구성도" src="https://github.com/user-attachments/assets/f018816a-d94c-45ac-a269-83c9f9a44b8f" />
+
 ---
 
 ## 📃 커밋 컨벤션 & 협업 규칙
