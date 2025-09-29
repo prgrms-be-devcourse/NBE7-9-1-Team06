@@ -19,7 +19,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +32,9 @@ public class AdminOrdersService {
 
     private final OrdersRepository ordersRepository;
     private final OrdersDetailRepository ordersDetailRepository;
-//    private final OrdersService ordersService;
     private final ProductRepository productRepository;
     private final OrdersService ordersService;
+    private static final LocalTime CUTOFF_TIME = LocalTime.of(14, 0);
 
     // 전체 주문 목록 조회
     public AdminOrdersListResBody getAdminOrdersList() {
@@ -54,15 +57,6 @@ public class AdminOrdersService {
     }
 
 
-//    public AdminOrdersUpdateResBody updateOrders(int ordersId, AdminOrdersUpdateReqBody reqBody) {
-//        Orders orders = ordersService.findById(ordersId)
-//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 주문: " + ordersId));
-//
-//
-//
-//        return ();
-//    }
-
     // 주문 상세 조회
     public AdminOrdersDetailResBody getAdminOrderDetail(int orderId) {
         Orders orders = ordersService.findById(orderId)
@@ -80,6 +74,7 @@ public class AdminOrdersService {
         return new AdminOrdersDetailResBody(OrdersDto, orderDetails);
     }
 
+
     // 주문 삭제 (취소)
     public void adminDeleteOrder(Orders orders) {
         if (OrderStatus.CANCELLED.equals(orders.getStatus())) {
@@ -92,6 +87,7 @@ public class AdminOrdersService {
         orders.setStatus(OrderStatus.CANCELLED);
         ordersRepository.save(orders);
     }
+
 
     // 주문 수정
     public void adminUpdateOrder(int orderId, AdminOrdersUpdateReqBody reqBody) {
@@ -120,34 +116,46 @@ public class AdminOrdersService {
     }
 
     // 주문 상세 내역 갱신 및 재고 차감
-    private int updateOrderDetailsAndStock(Orders orders, List<AdminOrdersUpdateReqBody.OrderItemReq> items) {
-        orders.getOrderDetails().clear();
-        int newTotalPrice = 0;
+private int updateOrderDetailsAndStock(Orders orders, List<AdminOrdersUpdateReqBody.OrderItemReq> items) {
+                    orders.getOrderDetails().clear();
+                    int newTotalPrice = 0;
 
-        for (AdminOrdersUpdateReqBody.OrderItemReq itemReq : items) {
-            Product product = productRepository.findById(itemReq.productId())
-                    .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
+                    // OrderItemReq를 productId 기준으로 합산하여 중복 제거
+                    Map<Integer, Integer> productQuantityMap = new HashMap<>();
+                    for (AdminOrdersUpdateReqBody.OrderItemReq itemReq : items) {
+                        productQuantityMap.merge(itemReq.productId(), itemReq.quantity(), Integer::sum);
+                    }
 
-            if (product.getQuantity() < itemReq.quantity()) {
-                throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE);
-            }
+                    for (Map.Entry<Integer, Integer> entry : productQuantityMap.entrySet()) {
+                        int productId = entry.getKey();
+                        int quantity = entry.getValue();
 
-            OrdersDetail newDetail = new OrdersDetail();
-            newDetail.setProduct(product);
-            newDetail.setOrderQuantity(itemReq.quantity());
-            newDetail.setPrice(product.getProductPrice() * itemReq.quantity());
-            newDetail.setOrders(orders);
+                        Product product = productRepository.findById(productId)
+                                .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
 
-            ordersDetailRepository.save(newDetail); // OrdersDetail 저장
+                        if (quantity <= 0) {
+                            throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE, "수량은 1 이상이어야 합니다: " + product.getProductName());
+                        }
+                        if (product.getQuantity() < quantity) {
+                            throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE, "재고가 부족합니다: " + product.getProductName());
+                        }
 
-            orders.getOrderDetails().add(newDetail);
-            product.setQuantity(product.getQuantity() - itemReq.quantity());
-            productRepository.save(product);
+                        OrdersDetail newDetail = new OrdersDetail();
+                        newDetail.setProduct(product);
+                        newDetail.setOrderQuantity(quantity);
+                        newDetail.setPrice(product.getProductPrice() * quantity);
+                        newDetail.setOrders(orders);
 
-            newTotalPrice += newDetail.getPrice();
-        }
-        return newTotalPrice;
-    }
+                        ordersDetailRepository.save(newDetail);
+                        orders.getOrderDetails().add(newDetail);
+
+                        product.setQuantity(product.getQuantity() - quantity);
+                        productRepository.save(product);
+
+                        newTotalPrice += newDetail.getPrice();
+                    }
+                    return newTotalPrice;
+                }
 
     // 주문 정보 업데이트
     private void updateOrderInfo(Orders orders, String address, Integer zipCode, int totalPrice) {
@@ -155,4 +163,14 @@ public class AdminOrdersService {
         orders.setZipCode(zipCode);
         orders.setTotalPrice(totalPrice);
     }
+
+
+//    // 합배송 가능한 주문 목록 조회
+//    public List<Orders> getCombinableOrders(int orderId) {
+//
+//    }
+//        Orders targetOrder = ordersRepository.findById(orderId)
+//                .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+//
+
 }

@@ -64,7 +64,7 @@ public class AdminOrderController {
 
         return new RsData<>(
                 "200-1",
-                "%d번 주문이 취소되었습니다.".formatted(orderId)
+                "관리자 - %d번 주문이 취소되었습니다.".formatted(orderId)
         );
     }
 
@@ -74,7 +74,7 @@ public class AdminOrderController {
             @RequestBody AdminOrdersUpdateReqBody reqBody
     ) {
         adminOrdersService.adminUpdateOrder(orderId, reqBody);
-        return new RsData<>("200-1", "%d번 주문이 수정되었습니다.".formatted(orderId));
+        return new RsData<>("200-1", "관리자 - %d번 주문이 수정되었습니다.".formatted(orderId));
     }
 
 //    // 합배송 처리
@@ -84,4 +84,5 @@ public class AdminOrderController {
 //    ) {
 //        return adminOrderService.mergeOrdersByDate(baseDate);
 //    }
+
 }

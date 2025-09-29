@@ -1,13 +1,13 @@
 package com.backend.domain.admin.auth.controller;
 
+import com.backend.domain.admin.auth.dto.LoginRequest;
+import com.backend.domain.admin.auth.dto.LoginResponse;
 import com.backend.domain.admin.auth.entity.Admin;
 import com.backend.domain.admin.auth.service.AdminAuthService;
 import com.backend.domain.admin.auth.service.AuthTokenService;
 import com.backend.global.exception.ServiceException;
 import com.backend.global.rq.Rq;
 import com.backend.global.rsData.RsData;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,32 +20,16 @@ public class AdminAuthController {
     private final AuthTokenService authTokenService;
     private final Rq rq;
 
-    record LoginRequest(
-            @NotBlank
-            @Size(min = 2, max = 30)
-            String username,
-
-            @NotBlank
-            @Size(min = 2, max = 30)
-            String password
-    ) {
-    }
-
-    record LoginResponse(
-            String accessToken
-    ) {
-    }
-
     @PostMapping("/login")
     public RsData<LoginResponse> login(
             @RequestBody LoginRequest loginReqBody
     ) {
 
-        Admin admin = adminAuthService.findByUsername(loginReqBody.username)
+        Admin admin = adminAuthService.findByUsername(loginReqBody.username())
                 .orElseThrow(() -> new ServiceException("401-1", "존재하지 않는 아이디입니다.")
         );
 
-        adminAuthService.checkPassword(loginReqBody.password, admin.getPassword());
+        adminAuthService.checkPassword(loginReqBody.password(), admin.getPassword());
         String accessToken = authTokenService.genAccessToken(admin);
 
         LoginResponse loginResponse= new LoginResponse(accessToken);
