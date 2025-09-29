@@ -5,6 +5,7 @@
 
   color-scheme: light;
   color: #213547;
+  background-color: #f5f1eb; /* Light brown background to match app theme */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,86 +27,6 @@ body {
   min-width: 320px;
   min-height: 100vh;
   width: 100%;
-
-  /* Exact luxury fabric drape background from image */
-  background: 
-    /* Main fabric shadows - large flowing waves */ radial-gradient(
-      ellipse 1200px 800px at 20% 10%,
-      rgba(0, 0, 0, 0.12) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 1000px 600px at 80% 90%,
-      rgba(0, 0, 0, 0.08) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 800px 500px at 60% 30%,
-      rgba(0, 0, 0, 0.06) 0%,
-      transparent 60%
-    ),
-    /* Fabric highlights - silk shine */
-      radial-gradient(
-        ellipse 600px 400px at 30% 70%,
-        rgba(255, 255, 255, 0.25) 0%,
-        transparent 50%
-      ),
-    radial-gradient(
-      ellipse 500px 300px at 70% 20%,
-      rgba(255, 255, 255, 0.2) 0%,
-      transparent 50%
-    ),
-    /* Base luxury fabric color */
-      linear-gradient(
-        135deg,
-        #fafafa 0%,
-        #f5f5f5 30%,
-        #f8f8f8 60%,
-        #f0f0f0 100%
-      );
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
-    100% 100%;
-  background-attachment: fixed;
-
-  /* Subtle fabric texture overlay */
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    /* Additional wave patterns for depth */ radial-gradient(
-      ellipse 1400px 700px at 15% 25%,
-      rgba(0, 0, 0, 0.04) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 900px 450px at 85% 75%,
-      rgba(0, 0, 0, 0.03) 0%,
-      transparent 60%
-    ),
-    /* Subtle fabric weave texture */
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 4px,
-        rgba(255, 255, 255, 0.01) 4px,
-        rgba(255, 255, 255, 0.01) 8px
-      ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 4px,
-      rgba(0, 0, 0, 0.005) 4px,
-      rgba(0, 0, 0, 0.005) 8px
-    );
-  pointer-events: none;
-  z-index: -1;
 }
 
 h1 {
