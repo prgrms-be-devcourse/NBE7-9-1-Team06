@@ -5,74 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22069f5c-a603-4f6e-af1d-f510ecb91b93" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/controller/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/dto/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/entity/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/repository/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/service/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/request/OrdersCreateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/request/OrdersUpdateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/response/OrdersCreateResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/response/OrdersDetailResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/response/OrdersListResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/response/OrdersUpdateResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/scheduler/OrdersScheduler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/controller/ProductController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/dto/ProductDetailResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/dto/ProductResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/config/SchedulerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/util/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/css/admin.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/image/bean.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/js/auth.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/js/orders.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/js/products.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/static/js/ui.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/admin/dashboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/admin/orders.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/admin/products.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/fragments/layout.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/fragments/nav.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Backend/src/main/resources/templates/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Frontend/src/services/api.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Frontend/src/services/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Frontend/src/services/mockService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Backend.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/Backend.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDetailDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDetailDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDetailResBody.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersListResBody.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Orders.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/Orders.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/OrdersDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/entity/OrdersDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersDetailRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersDetailRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrdersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/service/OrdersService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/product/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ServiceException.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ServiceException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/rsData/RsData.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/rsData/RsData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/mockData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/mockData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/pages/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/pages/Home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/ui/OrderHistoryPanel.css" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/ui/OrderHistoryPanel.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/ui/OrderHistoryPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/ui/OrderHistoryPanel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/ui/ProductDetailPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/ui/ProductDetailPanel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/ui/SidePanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/ui/SidePanel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,11 +48,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="feat/backend-hyun-admin-order" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -169,7 +97,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.BackendApplication.executor": "Run",
     "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "Merging conflict-fix",
+    "git-widget-placeholder": "Rebasing feat/backend-hyun-admin-order",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nx202/IdeaProjects/NBE7-9-1-Team06/Backend/src/main/resources",
     "node.js.detected.package.eslint": "true",
@@ -225,35 +153,12 @@
       <workItem from="1758674445664" duration="27588000" />
       <workItem from="1758758463409" duration="31403000" />
       <workItem from="1758844686775" duration="18686000" />
-      <workItem from="1759104169067" duration="22792000" />
+      <workItem from="1759104169067" duration="16565000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="conflict-fix" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
