@@ -3,14 +3,13 @@ package com.backend.domain.order.controller;
 import com.backend.domain.order.dto.OrdersDetailDto;
 import com.backend.domain.order.dto.OrdersDto;
 import com.backend.domain.order.dto.request.OrdersCreateRequest;
-import com.backend.domain.order.dto.response.OrdersListResponse;
 import com.backend.domain.order.dto.request.OrdersUpdateRequest;
 import com.backend.domain.order.dto.response.OrdersCreateResponse;
 import com.backend.domain.order.dto.response.OrdersDetailResponse;
+import com.backend.domain.order.dto.response.OrdersListResponse;
 import com.backend.domain.order.dto.response.OrdersUpdateResponse;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
-import com.backend.global.exception.ServiceException;
 import com.backend.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -91,8 +90,7 @@ public class OrdersController {
     // 특정 주문 조회
     @GetMapping("/{orderId}")
     public RsData<OrdersDetailResponse> getOrdersDetail(@PathVariable int orderId) {
-        Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new ServiceException("404-1", "%d번 주문을 찾을 수 없습니다.".formatted(orderId)));
+        Orders orders = ordersService.findById(orderId);
 
         boolean canModify = ordersService.canModifyOrder(orders);
         OrdersDto ordersDto = new OrdersDto(orders, canModify);
@@ -148,9 +146,7 @@ public class OrdersController {
     // 주문 취소
     @DeleteMapping("/{orderId}")
     public RsData<Void> deleteOrders(@PathVariable int orderId) {
-
-        Orders orders = ordersService.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+        Orders orders = ordersService.findById(orderId);
 
         ordersService.deleteOrders(orders);
 
@@ -158,7 +154,6 @@ public class OrdersController {
                 "200-1",
                 "%d번 주문이 취소되었습니다.".formatted(orderId)
         );
-
     }
 
 }
