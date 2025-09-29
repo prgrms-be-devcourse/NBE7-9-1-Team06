@@ -1,9 +1,6 @@
 package com.backend.domain.admin.order.controller;
 
-import com.backend.domain.admin.order.dto.AdminOrdersDetailResBody;
-import com.backend.domain.admin.order.dto.AdminOrdersListResBody;
-import com.backend.domain.admin.order.dto.AdminOrdersUpdateReqBody;
-import com.backend.domain.admin.order.dto.AdminOrdersUpdateResBody;
+import com.backend.domain.admin.order.dto.*;
 import com.backend.domain.admin.order.service.AdminOrdersService;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
@@ -50,6 +47,26 @@ public class AdminOrderController {
                 adminOrdersListResBody
         );
     }
+
+
+    // 합배송 처리 가능한 주문 목록 조회
+    @PostMapping
+    public RsData<AdminOrdersListResBody> getMergeableOrders(
+            @RequestParam String email,
+            @RequestBody AdminMergeableOrdersRequest request
+    ) {
+        AdminOrdersListResBody adminOrdersListResBody = adminOrdersService.getMergeableOrders(
+                email,
+                request.date()
+        );
+
+        return new RsData<>(
+                "200-1",
+                "관리자 - 합배송 처리 가능한 주문 목록을 성공적으로 조회했습니다.",
+                adminOrdersListResBody
+        );
+    }
+
 
     //주문 상세 조회
     @GetMapping("/{orderId}")
@@ -99,12 +116,6 @@ public class AdminOrderController {
                 resBody);
     }
 
-//    // 합배송 처리
-//    @PostMapping("/merge")
-//    public RsData<?> mergeOrdersByDate(
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate baseDate
-//    ) {
-//        return adminOrderService.mergeOrdersByDate(baseDate);
-//    }
+
 
 }

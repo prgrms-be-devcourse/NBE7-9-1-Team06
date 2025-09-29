@@ -1,7 +1,9 @@
 package com.backend.domain.order.controller;
 
 import com.backend.domain.order.dto.OrdersDetailDto;
+import com.backend.domain.order.dto.OrdersDetailResBody;
 import com.backend.domain.order.dto.OrdersDto;
+import com.backend.domain.order.dto.OrdersListResBody;
 import com.backend.domain.order.entity.Orders;
 import com.backend.domain.order.service.OrdersService;
 import com.backend.global.rsData.RsData;
@@ -75,22 +77,6 @@ public class OrdersController {
             return new RsData<>("404-1", e.getMessage());
         }
     }
-
-    // 주문 목록 조회 응답 Body
-    record OrdersListResBody(
-            List<OrdersWithDetailsDto> orders
-    ) {
-        record OrdersWithDetailsDto(
-                OrdersDto ordersDto,
-                List<OrdersDetailDto> orderDetails
-        ) {}
-    }
-
-    // 주문 상세 조회 응답 Body
-    record OrdersDetailResBody(
-            OrdersDto ordersDto,
-            List<OrdersDetailDto> orderDetails
-    ) {}
 
     // 주문 목록 조회
     @GetMapping

@@ -5,10 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22069f5c-a603-4f6e-af1d-f510ecb91b93" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminMergeableOrdersRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDetailResBody.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersListResBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/controller/AdminOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/controller/AdminOrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateReqBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/dto/AdminOrdersUpdateReqBody.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrdersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/admin/order/service/AdminOrdersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/controller/OrdersController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/dto/OrdersDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/domain/order/repository/OrdersRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/exception/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/main/java/com/backend/global/initData/BaseInitData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db_dev.mv.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -101,7 +109,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.BackendApplication.executor": "Run",
     "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "feat/backend-hyun-admin-order",
+    "git-widget-placeholder": "conflict-fix",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nx202/IdeaProjects/NBE7-9-1-Team06/Backend/src/main/resources",
     "node.js.detected.package.eslint": "true",
@@ -157,7 +165,7 @@
       <workItem from="1758674445664" duration="27588000" />
       <workItem from="1758758463409" duration="31403000" />
       <workItem from="1758844686775" duration="18686000" />
-      <workItem from="1759104169067" duration="16565000" />
+      <workItem from="1759104169067" duration="22792000" />
     </task>
     <servers />
   </component>
