@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Product, RawProduct } from "../types";
-import { defensivelyMapProducts } from "../utils";
+import type { Product } from "../types";
 import { ProductCard } from "../ui/ProductCard";
-import { getProducts } from "../mockData";
+import { getProducts } from "../services";
 
 type HomeProps = {
   onAddToCart?: (p: Product) => void;
