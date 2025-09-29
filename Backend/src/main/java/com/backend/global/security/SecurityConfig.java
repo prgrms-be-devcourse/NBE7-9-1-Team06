@@ -22,6 +22,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomAuthenticationFilter customAuthenticationFilter;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,12 +31,15 @@ public class SecurityConfig {
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/products/**",
                                 "/api/v1/orders/**",
                                 "/api/v1/admin/orders/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/admin/login", "/api/v1/orders").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().authenticated())
@@ -43,10 +47,28 @@ public class SecurityConfig {
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/admin/dashboard", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll())
+                .userDetailsService(customUserDetailsService)
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("accessToken")
+                        .permitAll())
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
                         exceptionHandling -> exceptionHandling
                                 .authenticationEntryPoint((request, response, authenticationException) -> {
+                                    // Thymeleaf 페이지 요청인 경우 로그인 페이지로 리다이렉트
+                                    if (request.getRequestURI().startsWith("/admin")) {
+                                        response.sendRedirect("/login");
+                                        return;
+                                    }
+                                    // API 요청인 경우 JSON 응답
                                     ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_NOT_FOUND;
                                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                                     response.setStatus(errorCode.getStatus().value());
@@ -59,6 +81,12 @@ public class SecurityConfig {
                                             """.formatted(errorCode.getCode(), errorCode.getMessage()));
                                 })
                                 .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    // Thymeleaf 페이지 요청인 경우 로그인 페이지로 리다이렉트
+                                    if (request.getRequestURI().startsWith("/admin")) {
+                                        response.sendRedirect("/login");
+                                        return;
+                                    }
+                                    // API 요청인 경우 JSON 응답
                                     ErrorCode errorCode = ErrorCode.ACCESS_TOKEN_INVALID;
                                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                                     response.setStatus(errorCode.getStatus().value());
@@ -87,4 +115,5 @@ public class SecurityConfig {
 
         return source;
     }
+
 }

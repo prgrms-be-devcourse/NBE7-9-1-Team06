@@ -56,14 +56,26 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        // 인증이 필요 없는 API 경로 설정
+        // 인증이 필요 없는 경로 설정
         if (uri.startsWith("/h2-console") ||
                 uri.startsWith("/swagger-ui") ||
+                uri.equals("/login") ||
+                (method.equals("POST") && uri.equals("/login")) || // Spring Security 폼 로그인 허용
+                uri.startsWith("/admin/") || // Thymeleaf 관리자 페이지는 Spring Security가 처리
+                uri.startsWith("/css/") ||
+                uri.startsWith("/js/") ||
                 uri.equals("/api/v1/admin/login") ||
                 (method.equals("GET") && uri.startsWith("/api/v1/products")) ||
                 (method.equals("GET") && uri.startsWith("/api/v1/orders")) ||
                 (method.equals("POST") && uri.equals("/api/v1/orders"))
         ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Spring Security 세션이 이미 있는 경우 JWT 인증 건너뛰기
+        Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+        if (existingAuth != null && existingAuth.isAuthenticated() && !"anonymousUser".equals(existingAuth.getPrincipal())) {
             filterChain.doFilter(request, response);
             return;
         }
