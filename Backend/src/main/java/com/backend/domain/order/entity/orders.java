@@ -2,20 +2,23 @@ package com.backend.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "orders") // 예약어 피하기
+@Table(name = "ORDERS")
 @Getter
 @Setter
-public class orders {
+@NoArgsConstructor
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String email;
@@ -29,9 +32,19 @@ public class orders {
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
     @Column(nullable = false)
     private String status;
+
+    // OrderDetails 엔티티와의 관계 (1:N)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrdersDetail> orderDetails;
+
+    @PrePersist
+    void prePersist() {
+        if (orderDate == null) orderDate = LocalDateTime.now();
+        if (status == null) status = "CREATED";
+        if (totalPrice == null) totalPrice = 0;
+    }
 }
