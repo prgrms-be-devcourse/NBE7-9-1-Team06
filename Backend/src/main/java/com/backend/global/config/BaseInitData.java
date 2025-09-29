@@ -1,6 +1,7 @@
 package com.backend.global.config;
 
-import com.backend.domain.admin.service.PostService;
+import com.backend.domain.product.entity.Post;
+import com.backend.domain.product.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -28,9 +29,9 @@ public class BaseInitData {
     public void work1() {
         if(postService.count() > 0) return;
 
-        postService.create("1번 커피", 5000, 10, "1번설명", "1번사진");
-        postService.create("2번 커피", 5000, 10, "2번설명", "2번사진");
-        postService.create("3번 커피", 5000, 10, "3번설명", "3번사진");
-        postService.create("4번 커피", 5000, 10, "4번설명", "4번사진");
+        postService.write("1번 커피", 5000, 10, "1번사진", "1번설명");
+        postService.write("2번 커피", 5000, 10, "2번사진", "2번설명");
+        postService.write("3번 커피", 5000, 10, "3번사진", "3번설명");
+        postService.write("4번 커피", 5000, 10, "4번사진", "4번설명");
     }
 }

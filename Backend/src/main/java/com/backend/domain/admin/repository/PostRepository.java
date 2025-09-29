@@ -1,9 +1,7 @@
-package com.backend.domain.admin.repository;
+package com.backend.domain.product.repository;
 
-import com.backend.domain.admin.entity.Post;
+import com.backend.domain.product.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 }
