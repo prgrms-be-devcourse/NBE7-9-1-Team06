@@ -68,7 +68,7 @@ public class AdminOrdersService {
     private AdminOrdersListResBody getAdminOrdersListResBody(List<Orders> ordersList) {
         List<AdminOrdersListResBody.OrdersWithDetailsDto> ordersWithDetails = ordersList.stream()
                 .map(orders -> {
-                    boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+                    boolean canModify = ordersService.canModifyOrder(orders);
                     OrdersDto ordersDto = new OrdersDto(orders, canModify);
                     List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
                             .map(OrdersDetailDto::new)
@@ -87,7 +87,7 @@ public class AdminOrdersService {
                 .orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 
 
-        boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
+        boolean canModify = ordersService.canModifyOrder(orders);
 
         OrdersDto OrdersDto = new OrdersDto(orders, canModify);
 
@@ -130,7 +130,7 @@ public class AdminOrdersService {
         ordersRepository.save(orders);
 
         return new AdminOrdersUpdateResBody(
-                new OrdersDto(orders, ordersService.canModifyOrder(orders.getOrderDate())),
+                new OrdersDto(orders, ordersService.canModifyOrder(orders)),
                 orders.getOrderDetails().stream().map(OrdersDetailDto::new).collect(Collectors.toList())
         );
     }

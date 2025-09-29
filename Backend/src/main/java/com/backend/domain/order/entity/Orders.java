@@ -40,8 +40,8 @@ public class Orders {
     private OrderStatus status;
 
     // OrderDetails 엔티티와의 관계 (1:N)
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrdersDetail> orderDetails;
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrdersDetail> orderDetails = new ArrayList<>();
 
     @PrePersist
     void prePersist() {

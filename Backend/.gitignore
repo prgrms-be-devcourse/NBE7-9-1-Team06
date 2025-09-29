@@ -19,12 +19,16 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/
+/build/
+/target/
 *.iws
 *.iml
 *.ipr
-out/
+/out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/resources/data.sql
 
 ### NetBeans ###
 /nbproject/private/

@@ -4,30 +4,29 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "PRODUCT")
+@Table(name = "product")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Integer id;
+    private Integer productId;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(nullable = false)
     private String productName;
 
-    @Column(name = "product_price", nullable = false)
-    private Integer productPrice;
+    @Column(nullable = false)
+    private int productPrice;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(nullable = false)
+    private int quantity;
 
     @Column(name = "image_url")
     private String imageUrl;

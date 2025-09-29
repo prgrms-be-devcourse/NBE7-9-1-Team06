@@ -18,6 +18,8 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
     @Query("SELECT o FROM Orders o JOIN FETCH o.orderDetails")
     List<Orders> findAllWithDetails();
 
+    List<Orders> findByStatus(OrderStatus orderStatus);
+
     List<Orders> findByEmail(String email);
 
     @Query("SELECT o FROM Orders o WHERE o.email = :email AND o.status IN (:statuses) AND o.orderDate BETWEEN :startTime AND :endTime")

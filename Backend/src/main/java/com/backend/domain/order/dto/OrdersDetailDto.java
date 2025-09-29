@@ -12,7 +12,7 @@ public record OrdersDetailDto (
     public OrdersDetailDto(OrdersDetail ordersDetail) {
         this(
                 ordersDetail.getId(),
-                ordersDetail.getProduct().getId(),
+                ordersDetail.getProduct().getProductId(),
                 ordersDetail.getProduct().getProductName(),
                 ordersDetail.getOrderQuantity(),
                 ordersDetail.getPrice()

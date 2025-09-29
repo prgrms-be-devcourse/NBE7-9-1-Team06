@@ -1,9 +1,15 @@
 package com.backend.domain.product.service;
 
+import com.backend.domain.product.dto.ProductDetailResponseDto;
+import com.backend.domain.product.dto.ProductResponseDto;
 import com.backend.domain.product.entity.Product;
 import com.backend.domain.product.repository.ProductRepository;
+import com.backend.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -11,20 +17,18 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public Long count() {
-        return productRepository.count();
+    // 전체 상품 목록 조회
+    public List<ProductResponseDto> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public Product addProduct(String name, int price, int quantity, String description, String imageUrl) {
-        Product newProduct = Product.builder()
-                .productName(name)
-                .productPrice(price)
-                .quantity(quantity)
-                .description(description)
-                .imageUrl(imageUrl)
-                .build();
-
-        return productRepository.save(newProduct);
+    // 상품 상세 조회
+    public ProductDetailResponseDto getProductById(Integer id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("PRODUCT-404","상품이 존재하지 않습니다."));
+        return ProductDetailResponseDto.fromEntity(product);
     }
-
 }

@@ -4,8 +4,8 @@ import com.backend.global.rsData.RsData;
 
 public class ServiceException extends RuntimeException {
 
-    private String resultCode;
-    private String msg;
+    private final String resultCode;
+    private final String msg;
 
     public ServiceException(String resultCode, String msg) {
         super("%s : %s".formatted(resultCode, msg));
