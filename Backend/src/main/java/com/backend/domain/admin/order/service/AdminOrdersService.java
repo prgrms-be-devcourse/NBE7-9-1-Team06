@@ -17,6 +17,7 @@ import com.backend.domain.product.repository.ProductRepository;
 import com.backend.global.exception.ErrorCode;
 import com.backend.global.exception.ServiceException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +42,32 @@ public class AdminOrdersService {
     public AdminOrdersListResBody getAdminOrdersList() {
         List<Orders> ordersList = ordersRepository.findAllWithDetails();
 
+        return getAdminOrdersListResBody(ordersList);
+    }
+
+    // 주문자 이메일로 주문 목록 조회
+    public AdminOrdersListResBody getAdminOrdersByEmail(String email) {
+
+        List<Orders> ordersList = ordersRepository.findByEmail(email);
+
+        if (ordersList.isEmpty()) {
+            throw new ServiceException(ErrorCode.ORDER_NOT_FOUND, "해당 이메일로 주문된 내역이 없습니다: " + email);
+        }
+
+        return getAdminOrdersListResBody(ordersList);
+
+    }
+
+    // 주문 목록과 상세 정보를 포함한 응답 생성
+    @NotNull
+    private AdminOrdersListResBody getAdminOrdersListResBody(List<Orders> ordersList) {
         List<AdminOrdersListResBody.OrdersWithDetailsDto> ordersWithDetails = ordersList.stream()
                 .map(orders -> {
                     boolean canModify = ordersService.canModifyOrder(orders.getOrderDate());
                     OrdersDto ordersDto = new OrdersDto(orders, canModify);
-
                     List<OrdersDetailDto> orderDetails = orders.getOrderDetails().stream()
                             .map(OrdersDetailDto::new)
                             .collect(Collectors.toList());
-
                     return new AdminOrdersListResBody.OrdersWithDetailsDto(ordersDto, orderDetails);
                 })
                 .collect(Collectors.toList());

@@ -36,6 +36,20 @@ public class AdminOrderController {
     }
 
 
+    // 주문자 이메일로 주문 리스트 조회
+    @GetMapping(params = "email")
+    public RsData<AdminOrdersListResBody> getOrdersByEmail(
+            @RequestParam("email") String email
+    ) {
+
+        AdminOrdersListResBody adminOrdersListResBody = adminOrdersService.getAdminOrdersByEmail(email);
+
+        return new RsData<>(
+                "200-1",
+                "관리자 - %s의 주문 목록을 조회했습니다.".formatted(email),
+                adminOrdersListResBody
+        );
+    }
 
     //주문 상세 조회
     @GetMapping("/{orderId}")
@@ -69,6 +83,8 @@ public class AdminOrderController {
         );
     }
 
+
+    //주문 수정
     @PutMapping("/{orderId}")
     public RsData<AdminOrdersUpdateResBody> updateOrder(
             @PathVariable int orderId,
