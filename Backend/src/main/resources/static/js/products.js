@@ -8,6 +8,8 @@
 const API_BASE_URL = "/api/v1/admin";
 
 let currentProductId = null; // 현재 수정 중인 상품 ID
+let currentViewMode = "active"; // 'active' 또는 'zero'
+let allProducts = []; // 전체 상품 목록 캐시
 
 /**
  * 상품 목록 로드
@@ -34,7 +36,8 @@ async function loadProducts() {
       (result.resultCode && result.resultCode.toString().startsWith("200"));
 
     if (isSuccess && result.data && result.data.products) {
-      renderProducts(result.data.products);
+      allProducts = result.data.products; // 전체 상품 목록 캐시
+      filterAndRenderProducts();
     } else {
       throw new Error(
         result.msg || result.message || "상품 목록을 불러올 수 없습니다."
@@ -75,6 +78,49 @@ function renderProducts(products) {
   });
 
   showTableState("data");
+}
+
+/**
+ * 현재 뷰 모드에 따라 상품을 필터링하고 렌더링
+ */
+function filterAndRenderProducts() {
+  let filteredProducts = [];
+
+  if (currentViewMode === "active") {
+    // 재고가 있는 상품들 (quantity > 0)
+    filteredProducts = allProducts.filter(
+      (product) => (product.quantity || 0) > 0
+    );
+  } else {
+    // 재고가 없는 상품들 (quantity = 0)
+    filteredProducts = allProducts.filter(
+      (product) => (product.quantity || 0) === 0
+    );
+  }
+
+  renderProducts(filteredProducts);
+}
+
+/**
+ * 상품 뷰 모드 토글
+ * @param {string} mode - 'active' 또는 'zero'
+ */
+function toggleProductView(mode) {
+  if (mode === currentViewMode) return; // 이미 같은 모드면 무시
+
+  currentViewMode = mode;
+
+  // 토글 버튼 상태 업데이트
+  const activeBtn = document.getElementById("activeProductsBtn");
+  const zeroBtn = document.getElementById("zeroStockBtn");
+
+  if (activeBtn && zeroBtn) {
+    activeBtn.classList.toggle("active", mode === "active");
+    zeroBtn.classList.toggle("active", mode === "zero");
+  }
+
+  // 상품 목록 필터링 및 렌더링
+  filterAndRenderProducts();
 }
 
 /**
@@ -332,6 +378,10 @@ async function handleProductSubmit() {
           : "상품이 성공적으로 등록되었습니다.",
         "success"
       );
+
+      // 폼 닫기 및 목록 새로고침 (필터링 상태 유지)
+      closeProductForm();
+      refreshProductsAfterUpdate();
     } else {
       throw new Error(
         result.msg ||
@@ -366,12 +416,12 @@ function editProduct(productId) {
 async function deleteProduct(productId) {
   try {
     const confirmed = await confirm(
-      `상품 ID ${productId}를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`
+      `상품 ID ${productId}의 재고를 0으로 설정하시겠습니까?\n이 상품은 "재고 없음 상품" 목록으로 이동됩니다.`
     );
 
     if (!confirmed) return;
 
-    showTableState("loading", { message: "상품을 삭제하는 중..." });
+    showTableState("loading", { message: "상품 재고를 0으로 설정하는 중..." });
 
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: "DELETE",
@@ -383,7 +433,10 @@ async function deleteProduct(productId) {
 
     // DELETE 요청은 보통 204 No Content를 반환하므로 응답 본문이 없을 수 있음
     if (response.status === 204) {
-      notify("상품이 성공적으로 삭제되었습니다.", "success");
+      notify(
+        "상품 재고가 0으로 설정되었습니다. 상품이 '재고 없음 상품' 목록으로 이동되었습니다.",
+        "success"
+      );
     } else {
       const result = await response.json();
       console.log("상품 삭제 응답:", result); // 디버깅용
@@ -396,10 +449,13 @@ async function deleteProduct(productId) {
         (result.resultCode && result.resultCode.toString().startsWith("200"));
 
       if (isSuccess) {
-        notify("상품이 성공적으로 삭제되었습니다.", "success");
+        notify(
+          "상품 재고가 0으로 설정되었습니다. 상품이 '재고 없음 상품' 목록으로 이동되었습니다.",
+          "success"
+        );
       } else {
         throw new Error(
-          result.msg || result.message || "상품 삭제에 실패했습니다."
+          result.msg || result.message || "상품 재고 설정에 실패했습니다."
         );
       }
     }
@@ -407,8 +463,8 @@ async function deleteProduct(productId) {
     // 목록 재조회
     await loadProducts();
   } catch (error) {
-    console.error("상품 삭제 오류:", error);
-    notify(error.message || "상품 삭제 중 오류가 발생했습니다.", "error");
+    console.error("상품 재고 설정 오류:", error);
+    notify(error.message || "상품 재고 설정 중 오류가 발생했습니다.", "error");
 
     // 에러 발생 시에도 목록 재조회
     await loadProducts();
@@ -533,6 +589,13 @@ function refreshProducts() {
   loadProducts();
 }
 
+/**
+ * 상품 수정 후 목록 새로고침 (필터링 상태 유지)
+ */
+function refreshProductsAfterUpdate() {
+  loadProducts(); // 전체 목록을 다시 로드하고 현재 뷰 모드에 따라 필터링
+}
+
 // 전역 함수로 등록
 window.loadProducts = loadProducts;
 window.showProductForm = showProductForm;
@@ -541,3 +604,4 @@ window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
 window.handleProductSubmit = handleProductSubmit;
 window.refreshProducts = refreshProducts;
+window.toggleProductView = toggleProductView;

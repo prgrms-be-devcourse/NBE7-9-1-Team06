@@ -191,6 +191,7 @@ function setupOrderUpdateForm(orderData) {
   const updateOrderId = document.getElementById("updateOrderId");
   const updateOrderAddress = document.getElementById("updateOrderAddress");
   const updateOrderZipCode = document.getElementById("updateOrderZipCode");
+  const updateOrderStatus = document.getElementById("updateOrderStatus");
   const orderItemsList = document.getElementById("orderItemsList");
 
   if (updateOrderId) {
@@ -203,6 +204,17 @@ function setupOrderUpdateForm(orderData) {
 
   if (updateOrderZipCode) {
     updateOrderZipCode.value = actualOrderData.zipCode || "";
+  }
+
+  if (updateOrderStatus) {
+    // 배송상태 설정 (대소문자 구분 없이 매칭)
+    const status = (actualOrderData.status || "").toUpperCase();
+    updateOrderStatus.value = status;
+
+    // 상태가 유효하지 않으면 기본값으로 설정
+    if (!["PENDING", "CONFIRMED", "CANCELLED"].includes(status)) {
+      updateOrderStatus.value = "PENDING";
+    }
   }
 
   // 주문 상품 목록 표시
@@ -561,6 +573,7 @@ async function handleOrderUpdate(event) {
     const orderId = formData.get("orderId");
     const address = formData.get("address");
     const zipCode = formData.get("zipCode");
+    const status = formData.get("status");
 
     if (!orderId) {
       throw new Error("주문 ID가 없습니다.");
@@ -568,6 +581,10 @@ async function handleOrderUpdate(event) {
 
     if (!address || !zipCode) {
       throw new Error("주소와 우편번호를 모두 입력해주세요.");
+    }
+
+    if (!status) {
+      throw new Error("주문 상태를 선택해주세요.");
     }
 
     // 주문 상품 목록 수집
@@ -596,6 +613,7 @@ async function handleOrderUpdate(event) {
     const updateData = {
       address: address,
       zipCode: parseInt(zipCode),
+      status: status,
       items: items,
     };
 

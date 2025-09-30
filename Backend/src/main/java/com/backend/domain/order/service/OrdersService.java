@@ -35,6 +35,12 @@ public class OrdersService {
     public record OrderItem(int productId, int quantity) {}
 
     public Orders createOrders(String email, String address, int zipCode, List<OrderItem> items) {
+        // 디버깅용 로그 추가
+        System.out.println("🔍 OrdersService.createOrders() 호출됨:");
+        System.out.println("Email: " + email);
+        System.out.println("Address: " + address);
+        System.out.println("ZipCode: " + zipCode);
+        
         // 주문 엔티티 생성
         Orders order = new Orders();
         order.setEmail(email);
@@ -42,6 +48,9 @@ public class OrdersService {
         order.setZipCode(zipCode);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
+        
+        System.out.println("🔍 Orders 엔티티 설정 후:");
+        System.out.println("order.getAddress(): " + order.getAddress());
 
 
         // 총 가격 계산 및 주문 상세 생성
@@ -72,7 +81,16 @@ public class OrdersService {
 
         // 총 가격 업데이트
         order.setTotalPrice(totalPrice);
-        return ordersRepository.save(order);
+        
+        System.out.println("🔍 DB 저장 전 Orders 엔티티:");
+        System.out.println("order.getAddress(): " + order.getAddress());
+        
+        Orders savedOrder = ordersRepository.save(order);
+        
+        System.out.println("🔍 DB 저장 후 Orders 엔티티:");
+        System.out.println("savedOrder.getAddress(): " + savedOrder.getAddress());
+        
+        return savedOrder;
     }
 
 

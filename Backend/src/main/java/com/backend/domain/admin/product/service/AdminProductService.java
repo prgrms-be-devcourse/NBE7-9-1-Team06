@@ -54,13 +54,15 @@ public class AdminProductService {
         }
     }
 
-    // 상품 삭제
+    // 상품 삭제 (소프트 삭제: quantity를 0으로 설정)
     public void deleteProduct(Integer productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.PRODUCT_NOT_FOUND));
 
         try {
-            productRepository.delete(product);
+            // 실제 삭제 대신 quantity를 0으로 설정 (소프트 삭제)
+            product.setQuantity(0);
+            productRepository.save(product);
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.PRODUCT_DELETE_FAILED);
         }

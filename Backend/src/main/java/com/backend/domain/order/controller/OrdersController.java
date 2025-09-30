@@ -31,17 +31,31 @@ public class OrdersController {
     @Operation(summary = "주문 생성")
     public RsData<OrdersCreateResponse> createOrder(@Valid @RequestBody OrdersCreateRequest reqBody) {
         try {
+            // 디버깅용 로그 추가
+            System.out.println("🔍 주문 생성 요청 데이터:");
+            System.out.println("Email: " + reqBody.getEmail());
+            System.out.println("Address: " + reqBody.getAddress());
+            System.out.println("ZipCode: " + reqBody.getZipCode());
+            System.out.println("Items: " + reqBody.getItems());
             // OrderItem 변환
             List<OrdersService.OrderItem> orderItems = reqBody.getItems().stream()
                     .map(item -> new OrdersService.OrderItem(item.getProductId(), item.getQuantity()))
                     .collect(Collectors.toList());
 
+            System.out.println("🔍 서비스 호출 전:");
+            System.out.println("Email: " + reqBody.getEmail());
+            System.out.println("Address: " + reqBody.getAddress());
+            System.out.println("ZipCode: " + reqBody.getZipCode());
+            
             Orders orders = ordersService.createOrders(
                     reqBody.getEmail(),
                     reqBody.getAddress(),
                     reqBody.getZipCode(),
                     orderItems
             );
+            
+            System.out.println("🔍 서비스 호출 후:");
+            System.out.println("orders.getAddress(): " + orders.getAddress());
             boolean canModify = ordersService.canModifyOrder(orders);
             OrdersDto ordersDto = new OrdersDto(orders, canModify);
 

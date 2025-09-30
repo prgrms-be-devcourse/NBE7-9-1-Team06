@@ -192,6 +192,15 @@
           </div>
 
           <div class="form-group">
+            <label for="updateOrderStatus">배송상태</label>
+            <select id="updateOrderStatus" name="status" required>
+              <option value="PENDING">대기중</option>
+              <option value="CONFIRMED">확정</option>
+              <option value="CANCELLED">취소됨</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label>주문 상품</label>
             <div id="orderItemsList" class="order-items-list">
               <!-- 주문 상품 목록이 여기에 동적으로 삽입됩니다 -->
