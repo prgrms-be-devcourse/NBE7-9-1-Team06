@@ -1,99 +1,250 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>주문관리 - 관리자 콘솔</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-</head>
-<body>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
     <!-- 네비게이션 -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <a href="/admin/dashboard">관리자 콘솔</a>
-            </div>
-            <div class="nav-menu">
-                <a href="/admin/dashboard" class="nav-link">대시보드</a>
-                <a href="/admin/products" class="nav-link">상품관리</a>
-                <a href="/admin/orders" class="nav-link active">주문관리</a>
-                <button class="nav-link logout-btn" onclick="logout()">로그아웃</button>
-            </div>
+      <div class="nav-container">
+        <div class="nav-brand">
+          <a href="/admin/dashboard">관리자 콘솔</a>
         </div>
+        <div class="nav-menu">
+          <a href="/admin/dashboard" class="nav-link">대시보드</a>
+          <a href="/admin/products" class="nav-link">상품관리</a>
+          <a href="/admin/orders" class="nav-link active">주문관리</a>
+          <a href="/logout" class="nav-link logout-btn">로그아웃</a>
+        </div>
+      </div>
     </nav>
 
     <!-- 메인 컨텐츠 -->
     <main class="main-content">
-        <div class="container">
-            <div class="page-header">
-                <h1>주문관리</h1>
-                <p>주문 목록을 조회하고 주문을 취소할 수 있습니다.</p>
-            </div>
-
-            <!-- 로딩 인디케이터 -->
-            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-                <div class="spinner"></div>
-                <span>주문 목록을 불러오는 중...</span>
-            </div>
-
-            <!-- 주문 목록 테이블 -->
-            <div class="table-container">
-                <table class="data-table" id="ordersTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>주문ID</th>
-                            <th>주문자 이메일</th>
-                            <th>주소</th>
-                            <th>총가격</th>
-                            <th>배송상태</th>
-                            <th class="text-right">액션</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody">
-                        <!-- 주문 데이터가 여기에 동적으로 삽입됩니다 -->
-                    </tbody>
-                </table>
-
-                <!-- 빈 상태 메시지 -->
-                <div id="emptyMessage" class="empty-state" style="display: none;">
-                    <div class="empty-icon">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                        </svg>
-                    </div>
-                    <h3>주문이 없습니다</h3>
-                    <p>아직 등록된 주문이 없습니다.</p>
-                </div>
-
-                <!-- 에러 상태 메시지 -->
-                <div id="errorMessage" class="error-state" style="display: none;">
-                    <div class="error-icon">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="15" y1="9" x2="9" y2="15"/>
-                            <line x1="9" y1="9" x2="15" y2="15"/>
-                        </svg>
-                    </div>
-                    <h3>오류가 발생했습니다</h3>
-                    <p id="errorText">주문 목록을 불러오는 중 오류가 발생했습니다.</p>
-                    <button class="btn btn-primary" onclick="loadOrders()">다시 시도</button>
-                </div>
-            </div>
+      <div class="container">
+        <div class="page-header">
+          <h1>주문관리</h1>
+          <p>주문 목록을 조회하고 주문을 취소할 수 있습니다.</p>
         </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="search-container">
+          <div class="search-row">
+            <div class="search-group">
+              <label for="emailSearch">이메일 검색</label>
+              <input
+                type="email"
+                id="emailSearch"
+                placeholder="주문자 이메일을 입력하세요"
+              />
+              <button class="btn btn-primary" onclick="searchByEmail()">
+                검색
+              </button>
+            </div>
+            <div class="search-group">
+              <label for="orderIdSearch">주문 ID 검색</label>
+              <input
+                type="text"
+                id="orderIdSearch"
+                placeholder="주문 ID를 입력하세요"
+              />
+              <button class="btn btn-primary" onclick="searchByOrderId()">
+                검색
+              </button>
+            </div>
+            <div class="search-group">
+              <button class="btn btn-secondary" onclick="clearSearch()">
+                전체 목록
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 로딩 인디케이터 -->
+        <div
+          id="loadingIndicator"
+          class="loading-indicator"
+          style="display: none"
+        >
+          <div class="spinner"></div>
+          <span>주문 목록을 불러오는 중...</span>
+        </div>
+
+        <!-- 주문 목록 테이블 -->
+        <div class="table-container">
+          <table class="data-table" id="ordersTable" style="display: none">
+            <thead>
+              <tr>
+                <th>주문ID</th>
+                <th>주문자 이메일</th>
+                <th>주소</th>
+                <th>총가격</th>
+                <th>배송상태</th>
+                <th class="text-right">액션</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- 주문 데이터가 여기에 동적으로 삽입됩니다 -->
+            </tbody>
+          </table>
+
+          <!-- 빈 상태 메시지 -->
+          <div id="emptyMessage" class="empty-state" style="display: none">
+            <div class="empty-icon">
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <h3>주문이 없습니다</h3>
+            <p>아직 등록된 주문이 없습니다.</p>
+          </div>
+
+          <!-- 에러 상태 메시지 -->
+          <div id="errorMessage" class="error-state" style="display: none">
+            <div class="error-icon">
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+            </div>
+            <h3>오류가 발생했습니다</h3>
+            <p id="errorText">주문 목록을 불러오는 중 오류가 발생했습니다.</p>
+            <button class="btn btn-primary" onclick="loadOrders()">
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <!-- 주문 상세 모달 -->
+    <div id="orderDetailModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="orderDetailTitle">주문 상세 정보</h2>
+          <button class="modal-close" onclick="closeOrderDetail()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="orderDetailBody">
+          <!-- 주문 상세 정보가 여기에 동적으로 삽입됩니다 -->
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeOrderDetail()"
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주문 수정 모달 -->
+    <div id="orderUpdateModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="orderUpdateTitle">주문 수정</h2>
+          <button class="modal-close" onclick="closeOrderUpdate()">
+            &times;
+          </button>
+        </div>
+        <form id="orderUpdateForm" class="modal-body">
+          <input type="hidden" id="updateOrderId" name="orderId" />
+
+          <div class="form-group">
+            <label for="updateOrderAddress">주소</label>
+            <input
+              type="text"
+              id="updateOrderAddress"
+              name="address"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="updateOrderZipCode">우편번호</label>
+            <input
+              type="number"
+              id="updateOrderZipCode"
+              name="zipCode"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="updateOrderStatus">배송상태</label>
+            <select id="updateOrderStatus" name="status" required>
+              <option value="PENDING">대기중</option>
+              <option value="CONFIRMED">확정</option>
+              <option value="CANCELLED">취소됨</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>주문 상품</label>
+            <div id="orderItemsList" class="order-items-list">
+              <!-- 주문 상품 목록이 여기에 동적으로 삽입됩니다 -->
+            </div>
+          </div>
+
+          <div
+            id="orderUpdateErrorMessage"
+            class="error-message"
+            style="display: none"
+          ></div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeOrderUpdate()"
+            >
+              취소
+            </button>
+            <button type="submit" class="btn btn-primary">수정</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/ui.js}"></script>
     <script th:src="@{/js/orders.js}"></script>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 인증 확인
-            requireAuth();
-            
-            // 주문 목록 로드
-            loadOrders();
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        // Spring Security가 자동으로 인증을 처리하므로 별도 인증 확인 불필요
+        console.log("주문관리 페이지 로드 완료");
+
+        // 주문 목록 로드
+        loadOrders();
+
+        // 주문 수정 폼 이벤트 리스너
+        const orderUpdateForm = document.getElementById("orderUpdateForm");
+        if (orderUpdateForm) {
+          orderUpdateForm.addEventListener("submit", handleOrderUpdate);
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

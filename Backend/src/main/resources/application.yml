@@ -1,1 +1,29 @@
-spring.application.name=Backend
+spring:
+  application:
+    name: Backend
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/coffee_shop?characterEncoding=UTF-8
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  sql:
+    init:
+      mode: always
+
+  h2:
+    console:
+      enabled: true
+
+custom:
+  jwt:
+    expireSeconds: 1800
+    secretPattern: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890g

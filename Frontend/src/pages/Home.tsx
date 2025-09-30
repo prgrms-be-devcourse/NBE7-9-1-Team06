@@ -22,7 +22,9 @@ export function Home({ onAddToCart, onProductClick }: HomeProps) {
       try {
         // Mock 데이터를 사용하여 상품 목록 조회
         const data = await getProducts();
-        if (mounted) setProducts(data);
+        // 수량이 0인 상품들을 제외하고 필터링
+        const availableProducts = data.filter((product) => product.stock > 0);
+        if (mounted) setProducts(availableProducts);
       } catch (e: any) {
         if (mounted) setError(e?.message || "상품을 불러오지 못했습니다");
       } finally {
@@ -39,7 +41,9 @@ export function Home({ onAddToCart, onProductClick }: HomeProps) {
     setError(null);
     try {
       const data = await getProducts();
-      setProducts(data);
+      // 수량이 0인 상품들을 제외하고 필터링
+      const availableProducts = data.filter((product) => product.stock > 0);
+      setProducts(availableProducts);
     } catch (e: any) {
       setError(e?.message || "상품을 불러오지 못했습니다");
     } finally {
