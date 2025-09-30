@@ -107,16 +107,66 @@ backend/
 │       ├── initData
 │       ├── rsData
 │       └── util
-└── src/main/resources
+├── src/main/resources/
+│   ├── application.yml
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── admin.css
+│   │   ├── js/
+│   │   │   ├── auth.js
+│   │   │   ├── ui.js
+│   │   │   ├── orders.js
+│   │   │   └── products.js
+│   │   └── images/
+│   └── templates/
+│       ├── fragments/
+│       │   ├── layout.html
+│       │   └── nav.html
+│       ├── admin/
+│       │   ├── dashboard.html
+│       │   ├── orders.html
+│       │   └── products.html
+│       └── login.html
+│
+└── build.gradle.kts
 
 frontend/
-├── app
-│   ├── page.tsx
-│   ├── orders
-│   └── search
-└── components
-    └── ui
-```
+├── public
+│   └── vite.svg
+├── src
+│   ├── assets
+│   │   └── react.svg
+│   ├── pages
+│   │   ├── Home.tsx
+│   │   └── ProductDetail.tsx
+│   ├── services
+│   │   ├── api.ts
+│   │   └── index.ts
+│   ├── ui
+│   │   ├── OrderHistoryPanel.css
+│   │   ├── OrderHistoryPanel.tsx
+│   │   ├── ProductCard.tsx
+│   │   ├── ProductDetailPanel.tsx
+│   │   └── SidePanel.tsx
+│   ├── App.css
+│   ├── App.tsx
+│   ├── index.css
+│   ├── index.tsx
+│   ├── main.tsx
+│   ├── mockData.ts
+│   ├── types.ts
+│   ├── utils.ts
+│   └── vite-env.d.ts
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── README.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
 
 ---
 ## 🗄️ ERD
